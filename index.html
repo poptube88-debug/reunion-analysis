@@ -1,1 +1,1397 @@
-<!DOCTYPE html><html></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>재회 가능성 분석 | 내 이별, 데이터로 읽다</title>
+<meta property="og:title" content="내 재회 가능성은? 데이터 기반 정밀 분석">
+<meta property="og:description" content="감정이 아닌 데이터로. 내 이별 케이스 유형과 지금 하면 망하는 행동을 무료로 확인하세요.">
+<style>
+  :root {
+    --primary: #7B5EA7;
+    --primary-dark: #5D4080;
+    --primary-light: #EDE7F6;
+    --accent: #E91E8C;
+    --accent-light: #FCE4F5;
+    --gray-100: #F8F8FC;
+    --gray-200: #EEECF7;
+    --gray-400: #9E9AB5;
+    --gray-600: #5C5878;
+    --gray-800: #2D2B3D;
+    --warning: #FF6B35;
+    --success: #27AE60;
+    --danger: #E74C3C;
+    --font: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: var(--font); background: var(--gray-100); color: var(--gray-800); }
+
+  /* ── 공통 유틸 ── */
+  .hidden { display:none !important; }
+  .btn-primary {
+    background: linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff; border:none; border-radius:14px;
+    padding:16px 32px; font-size:17px; font-weight:700;
+    cursor:pointer; width:100%; transition:.2s;
+    box-shadow:0 4px 20px rgba(123,94,167,.35);
+  }
+  .btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 28px rgba(123,94,167,.45); }
+  .btn-pay {
+    background: linear-gradient(135deg,#E91E8C,#C2185B);
+    color:#fff; border:none; border-radius:14px;
+    padding:18px 32px; font-size:18px; font-weight:800;
+    cursor:pointer; width:100%; transition:.2s;
+    box-shadow:0 4px 24px rgba(233,30,140,.4);
+  }
+  .btn-pay:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(233,30,140,.5); }
+  .btn-share {
+    background:#FEE500; color:#3C1E1E; border:none; border-radius:12px;
+    padding:14px 24px; font-size:15px; font-weight:700;
+    cursor:pointer; width:100%; transition:.2s; margin-bottom:10px;
+  }
+  .btn-share:hover { background:#FDDB00; }
+  .btn-link {
+    background:var(--gray-200); color:var(--gray-600); border:none; border-radius:12px;
+    padding:13px 24px; font-size:14px; font-weight:600; cursor:pointer; width:100%;
+    transition:.2s; margin-bottom:8px;
+  }
+  .btn-link:hover { background:#DDD9F0; }
+
+  /* ── 스크린 관리 ── */
+  .screen { display:none; min-height:100vh; }
+  .screen.active { display:block; }
+
+  /* ═══════════════════════════════
+     랜딩 페이지
+  ════════════════════════════════*/
+  #screen-landing {
+    background: linear-gradient(160deg,#1A0936 0%,#3D1A6B 50%,#1E0A3C 100%);
+    color:#fff; text-align:center;
+  }
+  .landing-hero {
+    padding: 60px 24px 40px;
+    max-width:480px; margin:0 auto;
+  }
+  .badge-new {
+    display:inline-block; background:rgba(233,30,140,.2);
+    border:1px solid rgba(233,30,140,.5); color:#F48FB1;
+    font-size:12px; font-weight:700; padding:5px 14px; border-radius:20px;
+    margin-bottom:20px; letter-spacing:.5px;
+  }
+  .landing-hero h1 {
+    font-size:30px; font-weight:900; line-height:1.35;
+    margin-bottom:16px; letter-spacing:-.3px;
+  }
+  .landing-hero h1 span { color:#E91E8C; }
+  .landing-hero p {
+    font-size:15px; color:rgba(255,255,255,.75); line-height:1.7; margin-bottom:32px;
+  }
+  .social-proof {
+    display:flex; justify-content:center; gap:24px; margin-bottom:36px; flex-wrap:wrap;
+  }
+  .proof-item { text-align:center; }
+  .proof-num { font-size:22px; font-weight:900; color:#E91E8C; }
+  .proof-label { font-size:11px; color:rgba(255,255,255,.6); margin-top:2px; }
+  .feature-list {
+    background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12);
+    border-radius:16px; padding:20px 24px; margin-bottom:28px; text-align:left;
+  }
+  .feature-list li {
+    list-style:none; padding:8px 0; font-size:14px;
+    color:rgba(255,255,255,.85); border-bottom:1px solid rgba(255,255,255,.06);
+  }
+  .feature-list li:last-child { border-bottom:none; }
+  .feature-list li::before { content:"✓ "; color:#E91E8C; font-weight:700; }
+  .free-label {
+    font-size:12px; color:rgba(255,255,255,.5); margin-top:14px;
+  }
+  .stars { color:#FFD700; font-size:18px; margin-bottom:4px; }
+  .review-text { font-size:12px; color:rgba(255,255,255,.5); }
+
+  /* ═══════════════════════════════
+     공통 카드 레이아웃 (설문/결과)
+  ════════════════════════════════*/
+  .page-wrap {
+    max-width:520px; margin:0 auto; padding:24px 20px 60px;
+  }
+  .top-bar {
+    display:flex; align-items:center; gap:12px; margin-bottom:28px;
+  }
+  .top-bar .logo {
+    font-size:15px; font-weight:800; color:var(--primary);
+    letter-spacing:-.3px;
+  }
+  .step-indicator {
+    margin-left:auto; font-size:12px; font-weight:700;
+    color:var(--gray-400); background:var(--gray-200);
+    padding:4px 12px; border-radius:20px;
+  }
+  .section-label {
+    font-size:12px; font-weight:700; color:var(--primary);
+    letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px;
+  }
+  .card {
+    background:#fff; border-radius:20px; padding:24px;
+    box-shadow:0 2px 16px rgba(0,0,0,.06); margin-bottom:16px;
+  }
+  .card h2 { font-size:20px; font-weight:800; color:var(--gray-800); margin-bottom:8px; }
+  .card p.sub { font-size:14px; color:var(--gray-600); line-height:1.6; margin-bottom:20px; }
+
+  /* 라디오/체크박스 커스텀 */
+  .q-label {
+    font-size:15px; font-weight:700; color:var(--gray-800); margin-bottom:12px; display:block;
+  }
+  .q-label span.qnum {
+    display:inline-block; width:22px; height:22px; border-radius:50%;
+    background:var(--primary); color:#fff; font-size:11px;
+    text-align:center; line-height:22px; font-weight:800; margin-right:8px;
+  }
+  .options { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+  .option-btn {
+    background:var(--gray-100); border:2px solid transparent;
+    border-radius:12px; padding:13px 16px; font-size:14px; font-weight:600;
+    color:var(--gray-800); cursor:pointer; text-align:left; transition:.15s;
+  }
+  .option-btn:hover { border-color:var(--primary-light); background:var(--primary-light); }
+  .option-btn.selected { border-color:var(--primary); background:var(--primary-light); color:var(--primary-dark); }
+  .option-btn.danger-option { }
+  .option-btn.danger-option.selected { border-color:var(--danger); background:#FDECEA; color:var(--danger); }
+
+  /* 진행 바 */
+  .progress-wrap { margin-bottom:24px; }
+  .progress-steps {
+    display:flex; gap:8px; margin-bottom:8px;
+  }
+  .progress-step {
+    flex:1; height:4px; border-radius:4px; background:var(--gray-200); transition:.3s;
+  }
+  .progress-step.done { background:var(--primary); }
+  .progress-step.active { background: linear-gradient(90deg,var(--primary),var(--accent)); }
+  .progress-text {
+    font-size:12px; font-weight:600; color:var(--gray-400); text-align:right;
+  }
+  .section-badge {
+    display:inline-block; background:var(--primary-light); color:var(--primary-dark);
+    font-size:12px; font-weight:800; padding:4px 12px; border-radius:20px; margin-bottom:16px;
+  }
+  .q-block { margin-bottom:24px; }
+  .q-block:last-child { margin-bottom:0; }
+
+  /* ═══════════════════════════════
+     무료 결과 페이지
+  ════════════════════════════════*/
+  .result-free-hero {
+    background: linear-gradient(135deg,var(--primary),var(--primary-dark));
+    border-radius:20px; padding:28px 24px; color:#fff; margin-bottom:16px; text-align:center;
+  }
+  .result-type-badge {
+    display:inline-block; background:rgba(255,255,255,.2);
+    border:1px solid rgba(255,255,255,.3); border-radius:20px;
+    font-size:13px; font-weight:700; padding:5px 16px; margin-bottom:16px;
+  }
+  .result-type-name { font-size:28px; font-weight:900; margin-bottom:8px; }
+  .result-type-sub { font-size:14px; opacity:.8; line-height:1.5; }
+  .result-level-wrap {
+    display:flex; gap:10px; margin-bottom:16px;
+  }
+  .level-card {
+    flex:1; background:#fff; border-radius:16px; padding:16px 12px; text-align:center;
+    box-shadow:0 2px 12px rgba(0,0,0,.07);
+  }
+  .level-label { font-size:11px; font-weight:700; color:var(--gray-400); margin-bottom:6px; }
+  .level-value {
+    font-size:22px; font-weight:900; margin-bottom:4px;
+  }
+  .level-value.high { color:var(--success); }
+  .level-value.mid { color:var(--warning); }
+  .level-value.low { color:var(--danger); }
+  .level-desc { font-size:11px; color:var(--gray-600); line-height:1.4; }
+
+  .warning-box {
+    background:#FFF8F3; border-left:4px solid var(--warning);
+    border-radius:12px; padding:16px 18px; margin-bottom:16px;
+  }
+  .warning-box .wtitle { font-size:13px; font-weight:800; color:var(--warning); margin-bottom:6px; }
+  .warning-box .wcontent { font-size:14px; color:var(--gray-800); line-height:1.6; }
+  .danger-box {
+    background:#FDECEA; border-left:4px solid var(--danger);
+    border-radius:12px; padding:16px 18px; margin-bottom:16px;
+  }
+  .danger-box .dtitle { font-size:13px; font-weight:800; color:var(--danger); margin-bottom:6px; }
+  .danger-box .dcontent { font-size:14px; color:var(--gray-800); line-height:1.6; }
+
+  /* 유료 미리보기 블러 */
+  .preview-card {
+    background:#fff; border-radius:20px; padding:24px;
+    box-shadow:0 2px 16px rgba(0,0,0,.06); margin-bottom:16px;
+    position:relative; overflow:hidden;
+  }
+  .preview-title { font-size:15px; font-weight:800; color:var(--gray-800); margin-bottom:14px; }
+  .blur-row {
+    background:var(--gray-200); border-radius:8px; height:14px; margin-bottom:8px;
+  }
+  .blur-row.w80 { width:80%; }
+  .blur-row.w65 { width:65%; }
+  .blur-row.w90 { width:90%; }
+  .preview-overlay {
+    position:absolute; bottom:0; left:0; right:0;
+    background:linear-gradient(transparent,rgba(255,255,255,.97));
+    padding:40px 24px 20px; text-align:center;
+  }
+  .preview-overlay p { font-size:13px; color:var(--gray-600); margin-bottom:12px; line-height:1.5; }
+  .preview-overlay strong { color:var(--primary); }
+
+  /* 결제 CTA 카드 */
+  .pay-card {
+    background: linear-gradient(135deg,#2D0A4E,#4A1270);
+    border-radius:20px; padding:28px 24px; color:#fff; margin-bottom:16px; text-align:center;
+  }
+  .pay-card h3 { font-size:20px; font-weight:900; margin-bottom:8px; }
+  .pay-card .pay-sub { font-size:14px; opacity:.8; line-height:1.5; margin-bottom:20px; }
+  .pay-items {
+    text-align:left; margin-bottom:24px;
+  }
+  .pay-item {
+    display:flex; align-items:flex-start; gap:8px; margin-bottom:10px; font-size:13px;
+  }
+  .pay-item .icon { font-size:15px; flex-shrink:0; margin-top:1px; }
+  .pay-price-wrap {
+    background:rgba(255,255,255,.1); border-radius:14px; padding:14px;
+    margin-bottom:20px; display:flex; align-items:center; justify-content:center; gap:12px;
+  }
+  .pay-original { font-size:14px; opacity:.5; text-decoration:line-through; }
+  .pay-now { font-size:26px; font-weight:900; color:#FFD54F; }
+  .pay-per { font-size:12px; opacity:.6; margin-top:4px; }
+  .pay-trust { font-size:12px; opacity:.6; margin-top:14px; }
+
+  /* ═══════════════════════════════
+     유료 결과 페이지
+  ════════════════════════════════*/
+  .paid-hero {
+    background: linear-gradient(135deg,#1A0936,#3D1A6B);
+    border-radius:20px; padding:28px 24px; color:#fff; text-align:center; margin-bottom:16px;
+  }
+  .paid-badge { font-size:12px; opacity:.7; margin-bottom:8px; }
+  .paid-type { font-size:26px; font-weight:900; margin-bottom:6px; }
+  .paid-sub { font-size:13px; opacity:.75; line-height:1.5; margin-bottom:20px; }
+  .score-row { display:flex; gap:10px; }
+  .score-box {
+    flex:1; background:rgba(255,255,255,.1); border-radius:14px; padding:14px 10px; text-align:center;
+  }
+  .score-lbl { font-size:10px; opacity:.65; margin-bottom:6px; font-weight:600; }
+  .score-num { font-size:32px; font-weight:900; color:#FFD54F; }
+  .score-bar-wrap { height:5px; background:rgba(255,255,255,.15); border-radius:4px; margin:6px 0; }
+  .score-bar { height:100%; border-radius:4px; background:linear-gradient(90deg,#FFD54F,#FF8A65); }
+  .score-trust { font-size:10px; opacity:.6; }
+
+  .signal-card {
+    background:#fff; border-radius:20px; padding:22px 20px;
+    box-shadow:0 2px 14px rgba(0,0,0,.06); margin-bottom:14px;
+  }
+  .signal-title { font-size:15px; font-weight:800; color:var(--gray-800); margin-bottom:14px; display:flex; align-items:center; gap:6px; }
+  .signal-list { list-style:none; }
+  .signal-list li {
+    padding:9px 0; font-size:13px; color:var(--gray-800); line-height:1.5;
+    border-bottom:1px solid var(--gray-100); display:flex; align-items:flex-start; gap:8px;
+  }
+  .signal-list li:last-child { border-bottom:none; }
+  .signal-list li .si { flex-shrink:0; font-size:14px; }
+
+  .variable-card {
+    background: linear-gradient(135deg,#EDE7F6,#FCE4F5);
+    border-radius:18px; padding:20px; margin-bottom:14px;
+  }
+  .variable-title { font-size:14px; font-weight:800; color:var(--primary-dark); margin-bottom:12px; }
+  .variable-item {
+    background:#fff; border-radius:10px; padding:10px 14px; margin-bottom:8px;
+    font-size:13px; color:var(--gray-800); line-height:1.5;
+    border-left:3px solid var(--primary);
+  }
+
+  .action-card {
+    background:#fff; border-radius:20px; padding:22px 20px;
+    box-shadow:0 2px 14px rgba(0,0,0,.06); margin-bottom:14px;
+  }
+  .action-title { font-size:15px; font-weight:800; margin-bottom:14px; display:flex; align-items:center; gap:6px; }
+  .action-item {
+    display:flex; gap:10px; align-items:flex-start; padding:10px 0;
+    border-bottom:1px solid var(--gray-100); font-size:13px; line-height:1.55;
+  }
+  .action-item:last-child { border-bottom:none; }
+  .action-num {
+    min-width:22px; height:22px; background:var(--primary); color:#fff;
+    border-radius:50%; font-size:11px; font-weight:800; display:flex; align-items:center;
+    justify-content:center; flex-shrink:0; margin-top:1px;
+  }
+  .action-num.red { background:var(--danger); }
+  .timeline-card {
+    background:#fff; border-radius:20px; padding:22px 20px;
+    box-shadow:0 2px 14px rgba(0,0,0,.06); margin-bottom:14px;
+  }
+  .timeline-day {
+    display:flex; gap:12px; margin-bottom:14px; align-items:flex-start;
+  }
+  .td-badge {
+    min-width:42px; background:var(--primary); color:#fff;
+    border-radius:8px; font-size:11px; font-weight:800; text-align:center; padding:5px 6px;
+    flex-shrink:0;
+  }
+  .td-content { font-size:13px; color:var(--gray-800); line-height:1.55; }
+  .td-content strong { color:var(--primary-dark); }
+
+  .recommend-card {
+    border-radius:20px; padding:22px 20px; margin-bottom:14px; text-align:center;
+  }
+  .recommend-card.rec-yes { background:linear-gradient(135deg,#E8F5E9,#C8E6C9); }
+  .recommend-card.rec-hold { background:linear-gradient(135deg,#FFF3E0,#FFE0B2); }
+  .recommend-card.rec-no { background:linear-gradient(135deg,#FDECEA,#FFCCBC); }
+  .rec-icon { font-size:36px; margin-bottom:10px; }
+  .rec-label { font-size:18px; font-weight:900; margin-bottom:8px; }
+  .rec-desc { font-size:13px; line-height:1.6; opacity:.85; }
+
+  .sim-card {
+    background:#fff; border-radius:20px; padding:22px 20px;
+    box-shadow:0 2px 14px rgba(0,0,0,.06); margin-bottom:14px;
+  }
+  .sim-item {
+    background:var(--gray-100); border-radius:12px; padding:12px 14px; margin-bottom:10px;
+  }
+  .sim-trigger { font-size:12px; font-weight:700; color:var(--primary); margin-bottom:4px; }
+  .sim-response { font-size:13px; color:var(--gray-800); line-height:1.5; }
+
+  /* 공유 결과 카드 */
+  .share-result-card {
+    background: linear-gradient(135deg,#1A0936,#3D1A6B);
+    border-radius:20px; padding:28px 24px; margin-bottom:16px; color:#fff; text-align:center;
+  }
+  .src-title { font-size:15px; font-weight:900; margin-bottom:6px; }
+  .src-type { font-size:22px; font-weight:900; color:#FFD54F; margin-bottom:6px; }
+  .src-insight { font-size:14px; opacity:.85; line-height:1.6; margin-bottom:16px; }
+  .src-footer { font-size:11px; opacity:.5; }
+
+  .share-btns { margin-bottom:14px; }
+
+  /* 사후 추적 배너 */
+  .followup-banner {
+    background:var(--primary-light); border:1px solid rgba(123,94,167,.2);
+    border-radius:16px; padding:18px 20px; margin-bottom:14px; text-align:center;
+  }
+  .followup-banner p { font-size:13px; color:var(--primary-dark); line-height:1.6; }
+  .followup-banner strong { font-weight:800; }
+
+  /* 안전 경고 */
+  .safety-screen {
+    background:#fff; min-height:100vh; display:flex; align-items:center;
+    justify-content:center; padding:40px 24px;
+  }
+  .safety-card {
+    max-width:420px; text-align:center;
+  }
+  .safety-icon { font-size:56px; margin-bottom:16px; }
+  .safety-title { font-size:22px; font-weight:900; color:var(--danger); margin-bottom:12px; }
+  .safety-body { font-size:14px; color:var(--gray-800); line-height:1.7; margin-bottom:24px; }
+  .safety-links { display:flex; flex-direction:column; gap:8px; }
+  .safety-link {
+    background:var(--danger); color:#fff; border:none; border-radius:12px;
+    padding:14px; font-size:14px; font-weight:700; cursor:pointer;
+  }
+
+  /* 로딩 */
+  .loading-screen {
+    background: linear-gradient(160deg,#1A0936,#3D1A6B);
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; min-height:100vh; color:#fff; text-align:center; padding:40px;
+  }
+  .loader-ring {
+    width:70px; height:70px; border:4px solid rgba(255,255,255,.15);
+    border-top:4px solid #E91E8C; border-radius:50%;
+    animation:spin 1s linear infinite; margin-bottom:24px;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loading-steps { margin-top:20px; }
+  .loading-step {
+    font-size:13px; opacity:.6; margin-bottom:6px;
+    animation:fadeStep 2s ease forwards;
+  }
+  .loading-step.a2 { animation-delay:.6s; opacity:0; }
+  .loading-step.a3 { animation-delay:1.2s; opacity:0; }
+  .loading-step.a4 { animation-delay:1.8s; opacity:0; }
+  @keyframes fadeStep { to { opacity:.7; } }
+
+  /* 모달 */
+  .modal-bg {
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.6);
+    z-index:999; align-items:flex-end; justify-content:center;
+  }
+  .modal-bg.open { display:flex; }
+  .modal {
+    background:#fff; border-radius:24px 24px 0 0; padding:32px 24px 40px;
+    width:100%; max-width:520px;
+  }
+  .modal h3 { font-size:20px; font-weight:900; margin-bottom:6px; text-align:center; }
+  .modal .msub { font-size:14px; color:var(--gray-600); text-align:center; margin-bottom:24px; line-height:1.5; }
+  .pay-method-list { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+  .pay-method-btn {
+    background:var(--gray-100); border:2px solid var(--gray-200); border-radius:14px;
+    padding:14px 18px; font-size:15px; font-weight:700; cursor:pointer;
+    display:flex; align-items:center; gap:10px; transition:.15s;
+  }
+  .pay-method-btn:hover { border-color:var(--primary); background:var(--primary-light); }
+  .pay-method-btn .pm-icon { font-size:20px; }
+  .pay-disclaimer { font-size:11px; color:var(--gray-400); text-align:center; line-height:1.6; }
+  .modal-close {
+    background:none; border:none; font-size:22px; cursor:pointer;
+    position:absolute; right:20px; top:20px; color:var(--gray-600);
+  }
+
+  /* 반응형 */
+  @media(max-width:400px) {
+    .score-num { font-size:26px; }
+    .result-type-name { font-size:24px; }
+    .landing-hero h1 { font-size:26px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════
+     SCREEN 1: 랜딩
+════════════════════════════════ -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-hero">
+    <div class="badge-new">🔬 데이터 기반 분석</div>
+    <h1>내 이별, 지금 어디쯤<br>와 있을까?<br><span>재회 가능성 정밀 진단</span></h1>
+    <p>감정이 아닌 관계 데이터로.<br>이별 원인·현재 신호·행동 패턴을 분석해<br>지금 하면 망하는 행동부터 알려드립니다.</p>
+    <div class="social-proof">
+      <div class="proof-item">
+        <div class="proof-num">38,400+</div>
+        <div class="proof-label">누적 진단</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-num">6가지</div>
+        <div class="proof-label">케이스 유형</div>
+      </div>
+      <div class="proof-item">
+        <div class="proof-num">14개</div>
+        <div class="proof-label">분석 변수</div>
+      </div>
+    </div>
+    <ul class="feature-list">
+      <li>내 케이스 유형 즉시 확인 (무료)</li>
+      <li>지금 절대 하면 안 되는 행동 1개 (무료)</li>
+      <li>재회 가능성 구간: 높음/보통/낮음 (무료)</li>
+      <li>30일/90일 정밀 점수 + 행동 가이드 (1,000원)</li>
+    </ul>
+    <button class="btn-primary" onclick="goScreen('screen-q1')">
+      무료 진단 시작하기 →
+    </button>
+    <p class="free-label">60초 내 완료 · 회원가입 불필요</p>
+    <br>
+    <div class="stars">★★★★★</div>
+    <p class="review-text">"운세가 아니라 진짜 분석이라 신기했어요" — 사용자 후기</p>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 2: 설문 1단계 (무료)
+════════════════════════════════ -->
+<div id="screen-q1" class="screen">
+  <div class="page-wrap">
+    <div class="top-bar">
+      <span class="logo">💜 재회분석</span>
+      <span class="step-indicator">1/3 · 현재 관계 상태</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-steps">
+        <div class="progress-step active" id="ps1"></div>
+        <div class="progress-step" id="ps2"></div>
+        <div class="progress-step" id="ps3"></div>
+      </div>
+      <div class="progress-text">섹션 1 / 3</div>
+    </div>
+    <span class="section-badge">📋 기본 정보</span>
+
+    <div class="card">
+      <h2>현재 상황을 알려주세요</h2>
+      <p class="sub">정확한 데이터일수록 분석 신뢰도가 올라갑니다.</p>
+
+      <div class="q-block">
+        <label class="q-label"><span class="qnum">1</span>교제 기간은?</label>
+        <div class="options" id="q1">
+          <button class="option-btn" onclick="selectOpt('q1',this,'3개월 미만')">3개월 미만</button>
+          <button class="option-btn" onclick="selectOpt('q1',this,'3~6개월')">3~6개월</button>
+          <button class="option-btn" onclick="selectOpt('q1',this,'6개월~1년')">6개월~1년</button>
+          <button class="option-btn" onclick="selectOpt('q1',this,'1~2년')">1~2년</button>
+          <button class="option-btn" onclick="selectOpt('q1',this,'2년 이상')">2년 이상</button>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label"><span class="qnum">2</span>이별 후 경과 기간은?</label>
+        <div class="options" id="q2">
+          <button class="option-btn" onclick="selectOpt('q2',this,'1주일 이내')">1주일 이내</button>
+          <button class="option-btn" onclick="selectOpt('q2',this,'2~4주')">2~4주</button>
+          <button class="option-btn" onclick="selectOpt('q2',this,'1~3개월')">1~3개월</button>
+          <button class="option-btn" onclick="selectOpt('q2',this,'3~6개월')">3~6개월</button>
+          <button class="option-btn" onclick="selectOpt('q2',this,'6개월 이상')">6개월 이상</button>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label"><span class="qnum">3</span>헤어지자고 먼저 말한 쪽은?</label>
+        <div class="options" id="q3">
+          <button class="option-btn" onclick="selectOpt('q3',this,'상대방')">상대방이 먼저</button>
+          <button class="option-btn" onclick="selectOpt('q3',this,'나')">내가 먼저</button>
+          <button class="option-btn" onclick="selectOpt('q3',this,'합의')">서로 합의</button>
+          <button class="option-btn" onclick="selectOpt('q3',this,'흐지부지')">명확히 말하지 않고 흐지부지</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goQ2()">다음 →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 3: 설문 2단계
+════════════════════════════════ -->
+<div id="screen-q2" class="screen">
+  <div class="page-wrap">
+    <div class="top-bar">
+      <span class="logo">💜 재회분석</span>
+      <span class="step-indicator">2/3 · 이별 원인</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-steps">
+        <div class="progress-step done"></div>
+        <div class="progress-step active"></div>
+        <div class="progress-step"></div>
+      </div>
+      <div class="progress-text">섹션 2 / 3</div>
+    </div>
+    <span class="section-badge">💬 이별 원인 & 연락 현황</span>
+
+    <div class="card">
+      <div class="q-block">
+        <label class="q-label"><span class="qnum">4</span>이별의 가장 큰 이유는?</label>
+        <div class="options" id="q4">
+          <button class="option-btn" onclick="selectOpt('q4',this,'감정식음')">감정이 식었다 / 더 이상 좋아하지 않는다</button>
+          <button class="option-btn" onclick="selectOpt('q4',this,'반복갈등')">반복되는 싸움 / 성격 차이</button>
+          <button class="option-btn" onclick="selectOpt('q4',this,'외부상황')">거리·바쁨·취업·군대 등 현실 문제</button>
+          <button class="option-btn" onclick="selectOpt('q4',this,'신뢰붕괴')">바람·거짓말·신뢰 파괴</button>
+          <button class="option-btn" onclick="selectOpt('q4',this,'자연소멸')">자연스럽게 소월해짐</button>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label"><span class="qnum">5</span>현재 연락 상태는?</label>
+        <div class="options" id="q5">
+          <button class="option-btn" onclick="selectOpt('q5',this,'차단')">완전 차단 (전화·카톡·SNS 모두)</button>
+          <button class="option-btn" onclick="selectOpt('q5',this,'읽씹')">연락은 되지만 거의 답장 없음</button>
+          <button class="option-btn" onclick="selectOpt('q5',this,'가끔')">가끔 짧게 연락</button>
+          <button class="option-btn" onclick="selectOpt('q5',this,'자주')">자주 연락하는 편</button>
+          <button class="option-btn" onclick="selectOpt('q5',this,'거의정상')">이별 전이랑 거의 비슷하게 연락</button>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label"><span class="qnum">6</span>상대가 새로운 사람을 만나는 것 같다고 느끼는가?</label>
+        <div class="options" id="q6">
+          <button class="option-btn" onclick="selectOpt('q6',this,'확실히')">확실히 그런 것 같다</button>
+          <button class="option-btn" onclick="selectOpt('q6',this,'아마도')">아마도 그런 것 같다</button>
+          <button class="option-btn" onclick="selectOpt('q6',this,'모름')">모르겠다</button>
+          <button class="option-btn" onclick="selectOpt('q6',this,'아닌것같음')">그런 것 같지 않다</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goQ3()">다음 →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 4: 설문 3단계
+════════════════════════════════ -->
+<div id="screen-q3" class="screen">
+  <div class="page-wrap">
+    <div class="top-bar">
+      <span class="logo">💜 재회분석</span>
+      <span class="step-indicator">3/3 · 현재 신호</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-steps">
+        <div class="progress-step done"></div>
+        <div class="progress-step done"></div>
+        <div class="progress-step active"></div>
+      </div>
+      <div class="progress-text">섹션 3 / 3 · 마지막!</div>
+    </div>
+    <span class="section-badge">🔍 현재 신호 감지</span>
+
+    <div class="card">
+      <div class="q-block">
+        <label class="q-label"><span class="qnum">7</span>이별 이후 상대의 태도는?</label>
+        <div class="options" id="q7">
+          <button class="option-btn" onclick="selectOpt('q7',this,'후회미안')">후회하는 것 같다 / 미안하다고 했다</button>
+          <button class="option-btn" onclick="selectOpt('q7',this,'무관심')">무관심하거나 냉담하다</button>
+          <button class="option-btn" onclick="selectOpt('q7',this,'모호함')">답장은 하지만 감정 표현이 없다</button>
+          <button class="option-btn" onclick="selectOpt('q7',this,'혼재')">차갑다가 따뜻하다가 왔다갔다 한다</button>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label"><span class="qnum">8</span>같은 이유로 이별한 적이 이전에도 있었나?</label>
+        <div class="options" id="q8">
+          <button class="option-btn" onclick="selectOpt('q8',this,'처음')">처음 이별</button>
+          <button class="option-btn" onclick="selectOpt('q8',this,'1회')">비슷한 이유로 한 번 더 이별한 적 있다</button>
+          <button class="option-btn" onclick="selectOpt('q8',this,'반복')">이미 여러 번 헤어졌다 만났다 반복</button>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <label class="q-label"><span class="qnum">9</span>⚠️ 안전 확인 (꼭 답해주세요)</label>
+        <div class="options" id="q9">
+          <button class="option-btn" onclick="selectOpt('q9',this,'없음')">없다 — 일반적인 이별</button>
+          <button class="option-btn danger-option" onclick="selectOpt('q9',this,'신체폭력')">신체적 폭력이 있었다</button>
+          <button class="option-btn danger-option" onclick="selectOpt('q9',this,'협박')">협박·통제·스토킹 행동이 있었다</button>
+          <button class="option-btn danger-option" onclick="selectOpt('q9',this,'경제착취')">경제적 착취나 지속적 정서 학대가 있었다</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goAnalyze()">분석 시작하기 →</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 5: 로딩
+════════════════════════════════ -->
+<div id="screen-loading" class="screen">
+  <div class="loading-screen">
+    <div class="loader-ring"></div>
+    <h2 style="font-size:20px;font-weight:800;margin-bottom:8px;">분석 중...</h2>
+    <p style="font-size:13px;opacity:.7;margin-bottom:20px;">입력하신 데이터를 기반으로 분석 중입니다</p>
+    <div class="loading-steps">
+      <p class="loading-step">✓ 이별 원인 패턴 분류 중</p>
+      <p class="loading-step a2">✓ 현재 접점 신호 해석 중</p>
+      <p class="loading-step a3">✓ 케이스 유형 매칭 중</p>
+      <p class="loading-step a4">✓ 예측 변수 가중치 계산 중</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 6: 무료 결과
+════════════════════════════════ -->
+<div id="screen-free-result" class="screen">
+  <div class="page-wrap">
+    <div class="top-bar">
+      <span class="logo">💜 재회분석</span>
+      <span class="step-indicator">무료 진단 결과</span>
+    </div>
+
+    <div class="result-free-hero">
+      <div class="result-type-badge" id="res-type-badge">케이스 유형</div>
+      <div class="result-type-name" id="res-type-name">분석 중...</div>
+      <div class="result-type-sub" id="res-type-desc">유형 설명이 들어갑니다</div>
+    </div>
+
+    <div class="result-level-wrap">
+      <div class="level-card">
+        <div class="level-label">재회 가능성 구간</div>
+        <div class="level-value" id="res-level-txt">보통</div>
+        <div class="level-desc" id="res-level-desc">추가 분석 권장</div>
+      </div>
+      <div class="level-card">
+        <div class="level-label">예측 신뢰도</div>
+        <div class="level-value" id="res-trust-txt" style="color:var(--primary)">중간</div>
+        <div class="level-desc" id="res-trust-desc">데이터 추가 시 상승</div>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      <div class="wtitle">⚠️ 지금 절대 하면 안 되는 행동</div>
+      <div class="wcontent" id="res-danger-action">분석 결과를 불러오는 중...</div>
+    </div>
+
+    <!-- 유료 미리보기 블러 -->
+    <div class="preview-card">
+      <div class="preview-title">📊 정밀 분석 결과 (미리보기)</div>
+      <div class="blur-row w90"></div>
+      <div class="blur-row w80"></div>
+      <div class="blur-row w65"></div>
+      <div class="blur-row w80"></div>
+      <div class="blur-row w90"></div>
+      <div class="preview-overlay">
+        <p>당신의 케이스에서 <strong>가장 중요한 변수 3개</strong>가 이미 분석되었습니다.<br>30일/90일 점수와 지금 하면 손해 보는 행동 5개, 7일 행동 가이드를 확인하세요.</p>
+      </div>
+    </div>
+
+    <!-- 결제 CTA -->
+    <div class="pay-card">
+      <h3>정밀 분석 전체 보기</h3>
+      <p class="pay-sub">현재 데이터 기준 <strong style="color:#FFD54F;">잠정 추정</strong>입니다.<br>더 많은 변수를 분석하면 정확도가 높아집니다.</p>
+      <div class="pay-items">
+        <div class="pay-item"><span class="icon">📈</span><span>30일/90일 재회 가능성 점수 (0~100)</span></div>
+        <div class="pay-item"><span class="icon">🔑</span><span>결과에 가장 큰 영향을 준 핵심 변수 3개</span></div>
+        <div class="pay-item"><span class="icon">🚫</span><span>지금 하면 망하는 행동 5개 전체</span></div>
+        <div class="pay-item"><span class="icon">📅</span><span>7일 행동 가이드 (요일별)</span></div>
+        <div class="pay-item"><span class="icon">💬</span><span>상대 반응 시뮬레이션 3가지</span></div>
+        <div class="pay-item"><span class="icon">✅</span><span>재회 권장/보류/비권장 최종 판정</span></div>
+        <div class="pay-item"><span class="icon">📄</span><span>결과 링크 저장 (7일 보관)</span></div>
+      </div>
+      <div class="pay-price-wrap">
+        <div>
+          <div class="pay-original">정상가 5,900원</div>
+          <div class="pay-now">1,000원</div>
+          <div class="pay-per">단 한 번만 · 즉시 확인</div>
+        </div>
+      </div>
+      <button class="btn-pay" onclick="openPayModal()">1,000원으로 정밀 분석 열기 →</button>
+      <div class="pay-trust">🔒 비회원 결제 가능 · 개인정보 최소 수집 · 결과 7일 후 자동 삭제</div>
+    </div>
+
+    <!-- 공유 유도 -->
+    <div class="card" style="text-align:center;">
+      <p style="font-size:14px;font-weight:800;color:var(--gray-800);margin-bottom:6px;">💡 친구가 걱정된다면?</p>
+      <p style="font-size:13px;color:var(--gray-600);margin-bottom:14px;">친구도 지금 어떤 행동이 위험한지 알아야 실수를 줄입니다</p>
+      <button class="btn-share" onclick="shareResult()">카카오톡으로 공유하기</button>
+      <button class="btn-link" onclick="copyLink()">🔗 링크 복사</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 7: 로딩 (유료)
+════════════════════════════════ -->
+<div id="screen-loading2" class="screen">
+  <div class="loading-screen">
+    <div class="loader-ring"></div>
+    <h2 style="font-size:20px;font-weight:800;margin-bottom:8px;">정밀 분석 중...</h2>
+    <p style="font-size:13px;opacity:.7;margin-bottom:20px;">모든 변수를 교차 분석하고 있습니다</p>
+    <div class="loading-steps">
+      <p class="loading-step">✓ 14개 예측 변수 가중치 적용 중</p>
+      <p class="loading-step a2">✓ 30일/90일 재회 곡선 계산 중</p>
+      <p class="loading-step a3">✓ 케이스별 행동 가이드 생성 중</p>
+      <p class="loading-step a4">✓ 상대 반응 시뮬레이션 구성 중</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 8: 유료 결과 (정밀)
+════════════════════════════════ -->
+<div id="screen-paid-result" class="screen">
+  <div class="page-wrap">
+    <div class="top-bar">
+      <span class="logo">💜 재회분석</span>
+      <span class="step-indicator">정밀 분석 결과</span>
+    </div>
+
+    <div class="paid-hero">
+      <div class="paid-badge">📊 데이터 기반 정밀 분석 완료</div>
+      <div class="paid-type" id="paid-type-name">유형명</div>
+      <div class="paid-sub" id="paid-type-desc">유형 설명</div>
+      <div class="score-row">
+        <div class="score-box">
+          <div class="score-lbl">30일 재회 가능성</div>
+          <div class="score-num" id="score-30">—</div>
+          <div class="score-bar-wrap"><div class="score-bar" id="bar-30" style="width:0%"></div></div>
+          <div class="score-trust" id="trust-30">신뢰도 산출 중</div>
+        </div>
+        <div class="score-box">
+          <div class="score-lbl">3개월 유지 가능성</div>
+          <div class="score-num" id="score-90">—</div>
+          <div class="score-bar-wrap"><div class="score-bar" id="bar-90" style="width:0%"></div></div>
+          <div class="score-trust" id="trust-90">유지 요인 분석 중</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 긍정 신호 -->
+    <div class="signal-card">
+      <div class="signal-title">✅ 긍정 신호</div>
+      <ul class="signal-list" id="positive-signals"></ul>
+    </div>
+
+    <!-- 부정 신호 -->
+    <div class="signal-card">
+      <div class="signal-title">⚠️ 부정 신호 & 주의 요인</div>
+      <ul class="signal-list" id="negative-signals"></ul>
+    </div>
+
+    <!-- 핵심 변수 -->
+    <div class="variable-card">
+      <div class="variable-title">🔑 결과에 가장 큰 영향을 준 변수 3개</div>
+      <div id="key-variables"></div>
+    </div>
+
+    <!-- 하면 안되는 행동 -->
+    <div class="action-card">
+      <div class="action-title" style="color:var(--danger)">🚫 지금 하면 망하는 행동 5가지</div>
+      <div id="bad-actions"></div>
+    </div>
+
+    <!-- 7일 행동 가이드 -->
+    <div class="timeline-card">
+      <div class="action-title" style="color:var(--success)">📅 7일 행동 가이드</div>
+      <div id="timeline-guide"></div>
+    </div>
+
+    <!-- 상대 반응 시뮬레이션 -->
+    <div class="sim-card">
+      <div class="action-title" style="color:var(--primary)">💬 상대 반응 시뮬레이션</div>
+      <p style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">상황별 상대방 반응 예측 (통계적 패턴 기반)</p>
+      <div id="sim-scenarios"></div>
+    </div>
+
+    <!-- 재회 권장도 -->
+    <div class="recommend-card" id="recommend-card">
+      <div class="rec-icon" id="rec-icon">🤔</div>
+      <div class="rec-label" id="rec-label">판정 중</div>
+      <div class="rec-desc" id="rec-desc">판정 근거를 불러오는 중...</div>
+    </div>
+
+    <!-- 한 줄 요약 -->
+    <div class="card" style="border-left:4px solid var(--primary);background:var(--primary-light);">
+      <div style="font-size:13px;font-weight:700;color:var(--primary-dark);margin-bottom:6px;">💡 한 줄 요약</div>
+      <div style="font-size:15px;font-weight:700;color:var(--gray-800);line-height:1.6;" id="one-line-summary">요약 생성 중...</div>
+    </div>
+
+    <!-- 공유 카드 -->
+    <div class="share-result-card">
+      <div class="src-title">내 연애회복 케이스</div>
+      <div class="src-type" id="share-type-name">유형명</div>
+      <div class="src-insight" id="share-insight">인사이트 메시지</div>
+      <div class="src-footer">재회분석 · 데이터 기반 관계 분석</div>
+    </div>
+
+    <div class="share-btns">
+      <button class="btn-share" onclick="shareResult()">카카오톡으로 친구에게 공유</button>
+      <button class="btn-link" onclick="copyLink()">🔗 결과 링크 복사 (7일 보관)</button>
+      <button class="btn-link" onclick="goScreen('screen-q1'); resetAll()">↺ 다시 진단하기</button>
+    </div>
+
+    <!-- 7일 후 재진단 -->
+    <div class="followup-banner">
+      <p>📲 상황이 바뀌면 점수도 바뀝니다<br><strong>7일 후 재진단을 받으면 변화된 가능성을 확인할 수 있습니다.</strong><br>상대가 연락했거나, 만남이 생겼다면 지금 바로 재분석하세요.</p>
+    </div>
+
+    <div class="card" style="background:var(--gray-100);font-size:11px;color:var(--gray-400);line-height:1.7;text-align:center;">
+      본 분석은 입력된 데이터 기반의 통계적 추정이며, 확정적 예언이 아닙니다. 재회와 관계 결정은 본인의 판단에 따르세요. 위험 관계(폭력·스토킹·강압)가 있는 경우 재회 여부보다 안전을 우선하시기 바랍니다. 입력 데이터는 결과 생성 후 7일 이내 자동 삭제됩니다.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     SCREEN 9: 안전 경고
+════════════════════════════════ -->
+<div id="screen-safety" class="screen">
+  <div class="safety-screen">
+    <div class="safety-card">
+      <div class="safety-icon">🚨</div>
+      <div class="safety-title">먼저 안전을 확인해 주세요</div>
+      <div class="safety-body">
+        입력하신 내용에서 <strong>위험 신호</strong>가 감지되었습니다.<br><br>
+        폭력·협박·통제·스토킹이 있는 관계에서는 재회 가능성보다 <strong>본인의 안전</strong>이 훨씬 더 중요합니다.<br><br>
+        혼자 결정하기 어려우시다면 아래 기관에 도움을 요청하세요.
+      </div>
+      <div class="safety-links">
+        <button class="safety-link" onclick="window.open('tel:1366')">📞 여성긴급전화 1366 (24시간)</button>
+        <button class="safety-link" onclick="window.open('tel:112')">🚔 경찰 112</button>
+        <button class="btn-link" style="margin-top:10px;" onclick="goScreen('screen-landing')">← 홈으로 돌아가기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     결제 모달
+════════════════════════════════ -->
+<div class="modal-bg" id="pay-modal">
+  <div class="modal" style="position:relative;">
+    <button class="modal-close" onclick="closePayModal()">✕</button>
+    <h3>정밀 분석 열기</h3>
+    <p class="msub">1,000원으로 내 케이스 전체 분석을 확인하세요.<br>결제 후 즉시 열립니다.</p>
+    <div style="background:#FFF8F3;border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:center;">
+      <div style="font-size:22px;font-weight:900;color:#E91E8C;margin-bottom:4px;">1,000원</div>
+      <div style="font-size:12px;color:#9E9AB5;">카카오페이 · 네이버페이 · 토스 · 신용카드 모두 가능</div>
+    </div>
+    <!-- STEP 1: 결제 버튼 -->
+    <div id="pay-step1">
+      <div class="pay-method-list">
+        <button class="pay-method-btn" onclick="goPayApp()" style="justify-content:center;background:linear-gradient(135deg,#E91E8C,#C2185B);color:#fff;border-color:transparent;font-size:16px;padding:16px;">
+          <span class="pm-icon">🔐</span> 1,000원 결제하러 가기 →
+        </button>
+      </div>
+      <p class="pay-disclaimer">
+        결제 금액: 1,000원 (부가세 포함)<br>
+        카카오페이 · 네이버페이 · 토스 · 신용카드 모두 가능<br>
+        결과 만족도가 낮으면 1회 무료 재분석 보장<br>
+        입력 데이터는 7일 후 자동 삭제됩니다
+      </p>
+    </div>
+    <!-- STEP 2: 결제 완료 후 확인 버튼 (결제 버튼 누른 뒤 표시) -->
+    <div id="pay-step2" style="display:none;">
+      <div style="background:#F3E5F5;border-radius:14px;padding:16px;text-align:center;margin-bottom:14px;">
+        <div style="font-size:15px;font-weight:800;color:#6A1B9A;margin-bottom:6px;">결제를 완료하셨나요?</div>
+        <div style="font-size:13px;color:#7B5EA7;line-height:1.6;">페이앱에서 결제 완료 후<br>아래 버튼을 눌러주세요</div>
+      </div>
+      <button class="pay-method-btn" onclick="confirmPaid()" style="justify-content:center;background:linear-gradient(135deg,#7B5EA7,#5D4080);color:#fff;border-color:transparent;font-size:16px;padding:16px;width:100%;">
+        ✅ 결제 완료 — 정밀 분석 보기
+      </button>
+      <button onclick="resetPaySteps()" style="background:none;border:none;color:#9E9AB5;font-size:12px;width:100%;margin-top:10px;cursor:pointer;">← 결제를 취소했어요</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// 상태 관리
+// ══════════════════════════════════════
+const answers = {};
+
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function selectOpt(qid, el, val) {
+  const isDanger = ['신체폭력','협박','경제착취'].includes(val);
+  document.querySelectorAll(`#${qid} .option-btn`).forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[qid] = val;
+}
+
+function getAns(qid) { return answers[qid] || ''; }
+
+// ══════════════════════════════════════
+// 설문 진행
+// ══════════════════════════════════════
+function goQ2() {
+  if (!answers.q1 || !answers.q2 || !answers.q3) {
+    alert('모든 항목을 선택해 주세요!'); return;
+  }
+  goScreen('screen-q2');
+}
+
+function goQ3() {
+  if (!answers.q4 || !answers.q5 || !answers.q6) {
+    alert('모든 항목을 선택해 주세요!'); return;
+  }
+  goScreen('screen-q3');
+}
+
+function goAnalyze() {
+  if (!answers.q7 || !answers.q8 || !answers.q9) {
+    alert('모든 항목을 선택해 주세요!'); return;
+  }
+  // 위험 관계 필터
+  if (['신체폭력','협박','경제착취'].includes(answers.q9)) {
+    goScreen('screen-safety');
+    return;
+  }
+  // 답변 세션 저장 (결제 후 복원용)
+  try { sessionStorage.setItem('reAnswer', JSON.stringify(answers)); } catch(e){}
+  goScreen('screen-loading');
+  setTimeout(() => {
+    computeFreeResult();
+    goScreen('screen-free-result');
+  }, 3200);
+}
+
+// ══════════════════════════════════════
+// 분석 엔진 (무료)
+// ══════════════════════════════════════
+function computeFreeResult() {
+  const a = answers;
+
+  // ─ 케이스 유형 분류 ─
+  let typeName, typeBadge, typeDesc;
+  if (a.q8 === '반복') {
+    typeName = '반복 온오프형'; typeBadge = '🔁 케이스 유형';
+    typeDesc = '재회는 반복되지만 같은 원인이 반복 재발하는 패턴입니다. 재회 발생 가능성은 있으나 관계 안정성에 주의가 필요합니다.';
+  } else if (a.q3 === '상대방' && a.q7 === '무관심') {
+    typeName = '일방 단절형'; typeBadge = '❌ 케이스 유형';
+    typeDesc = '상대방이 먼저 종료했고 현재 감정 표현이 없는 상태입니다. 접점 회복이 선행되어야 합니다.';
+  } else if (a.q4 === '신뢰붕괴') {
+    typeName = '신뢰 붕괴형'; typeBadge = '💔 케이스 유형';
+    typeDesc = '신뢰 훼손이 핵심 원인인 케이스입니다. 재회보다 신뢰 회복이 우선이며, 재발 방지 구조 없이는 유지 가능성이 낮습니다.';
+  } else if (a.q4 === '외부상황') {
+    typeName = '상황 장벽형'; typeBadge = '🌐 케이스 유형';
+    typeDesc = '감정보다 현실 상황이 이별 원인입니다. 장벽 해소 시 재회 가능성이 상대적으로 높은 유형입니다.';
+  } else if (a.q7 === '혼재') {
+    typeName = '감정 잔존형'; typeBadge = '💜 케이스 유형';
+    typeDesc = '상대방에게 감정이 완전히 소멸되지 않은 신호가 있습니다. 접근 방식과 타이밍이 핵심 변수입니다.';
+  } else if (a.q5 === '거의정상' || a.q5 === '자주') {
+    typeName = '재접점 가능형'; typeBadge = '📡 케이스 유형';
+    typeDesc = '연락 채널이 유지되고 있습니다. 관계 정의를 어떻게 재설정하느냐가 핵심입니다.';
+  } else {
+    typeName = '감정 잔존형'; typeBadge = '💜 케이스 유형';
+    typeDesc = '현재 데이터 기준 잠정 유형입니다. 추가 분석 시 정확도가 높아집니다.';
+  }
+
+  // ─ 재회 가능성 구간 ─
+  let levelScore = 50;
+  if (a.q5 === '차단') levelScore -= 20;
+  if (a.q5 === '거의정상') levelScore += 20;
+  if (a.q5 === '자주') levelScore += 15;
+  if (a.q6 === '확실히') levelScore -= 15;
+  if (a.q6 === '아닌것같음') levelScore += 10;
+  if (a.q7 === '후회미안') levelScore += 20;
+  if (a.q7 === '무관심') levelScore -= 15;
+  if (a.q7 === '혼재') levelScore += 5;
+  if (a.q4 === '외부상황') levelScore += 10;
+  if (a.q4 === '신뢰붕괴') levelScore -= 10;
+  if (a.q8 === '반복') levelScore -= 5;
+  if (a.q2 === '1주일 이내') levelScore += 5;
+  if (a.q2 === '6개월 이상') levelScore -= 10;
+  if (a.q3 === '나') levelScore += 5;
+  if (a.q3 === '상대방') levelScore -= 5;
+  levelScore = Math.max(10, Math.min(90, levelScore));
+
+  let levelTxt, levelClass, levelDesc;
+  if (levelScore >= 65) { levelTxt = '높음'; levelClass = 'high'; levelDesc = '긍정 신호 복수 감지'; }
+  else if (levelScore >= 40) { levelTxt = '보통'; levelClass = 'mid'; levelDesc = '추가 분석 권장'; }
+  else { levelTxt = '낮음'; levelClass = 'low'; levelDesc = '접근 전 전략 재검토 필요'; }
+
+  // ─ 신뢰도 ─
+  let trustTxt, trustDesc;
+  const dataCount = Object.keys(answers).length;
+  if (dataCount >= 9) { trustTxt = '중간'; trustDesc = '정밀분석 시 높음으로 상승'; }
+  else { trustTxt = '낮음'; trustDesc = '추가 데이터 필요'; }
+
+  // ─ 위험 행동 1개 ─
+  let dangerAction = '';
+  if (a.q5 === '차단') {
+    dangerAction = '🚫 차단 해제를 요구하거나 다른 연락처로 연락 시도 — 상대방의 차단은 명확한 경계 표시입니다. 이를 우회하면 역효과가 큽니다.';
+  } else if (a.q7 === '후회미안') {
+    dangerAction = '🚫 상대의 미안함을 빌미로 즉시 재결합을 압박 — 감정이 있더라도 너무 빠른 압박은 상대를 다시 멀어지게 합니다.';
+  } else if (a.q8 === '반복') {
+    dangerAction = '🚫 이번에도 "우선 만나자"며 원인 해결 없이 재결합 시도 — 같은 원인이 반복될 가능성이 매우 높습니다.';
+  } else if (a.q4 === '신뢰붕괴') {
+    dangerAction = '🚫 진심 어린 사과 없이 "그냥 잘 지내자"는 식의 접근 — 신뢰 붕괴 이후 형식적 접근은 불신을 더욱 키웁니다.';
+  } else if (a.q6 === '확실히') {
+    dangerAction = '🚫 상대가 새로운 사람을 만나는 중에 연락 폭탄 — 이 시기의 과도한 연락은 관계를 돌이킬 수 없게 만듭니다.';
+  } else {
+    dangerAction = '🚫 감정적으로 폭발하거나 "왜 이렇게 된 거야"는 식의 원망성 연락 — 이는 상대방의 방어벽을 높이고 대화를 차단하게 만듭니다.';
+  }
+
+  // ─ DOM 업데이트 ─
+  document.getElementById('res-type-badge').textContent = typeBadge;
+  document.getElementById('res-type-name').textContent = typeName;
+  document.getElementById('res-type-desc').textContent = typeDesc;
+  const levelEl = document.getElementById('res-level-txt');
+  levelEl.textContent = levelTxt;
+  levelEl.className = 'level-value ' + levelClass;
+  document.getElementById('res-level-desc').textContent = levelDesc;
+  document.getElementById('res-trust-txt').textContent = trustTxt;
+  document.getElementById('res-trust-desc').textContent = trustDesc;
+  document.getElementById('res-danger-action').textContent = dangerAction;
+
+  // 전역에 유료 결과용 데이터 저장
+  window._freeResult = { typeName, typeBadge, typeDesc, levelScore, levelTxt, dangerAction };
+}
+
+// ══════════════════════════════════════
+// 분석 엔진 (유료)
+// ══════════════════════════════════════
+function computePaidResult() {
+  const a = answers;
+  const fr = window._freeResult;
+
+  // 점수 계산 (무료 기반 + 추가 보정)
+  let score30 = fr.levelScore;
+  let score90 = fr.levelScore - 8;
+
+  if (a.q4 === '외부상황') { score30 += 8; score90 += 5; }
+  if (a.q4 === '신뢰붕괴') { score30 -= 8; score90 -= 15; }
+  if (a.q7 === '후회미안') { score30 += 12; score90 += 6; }
+  if (a.q7 === '혼재') { score30 += 4; score90 -= 2; }
+  if (a.q8 === '반복') { score30 += 8; score90 -= 12; }
+  if (a.q1 === '2년 이상') { score30 += 5; score90 += 8; }
+  if (a.q1 === '3개월 미만') { score30 -= 5; }
+  if (a.q6 === '확실히') { score30 -= 18; score90 -= 10; }
+  if (a.q3 === '흐지부지') { score30 += 8; }
+
+  score30 = Math.max(5, Math.min(95, Math.round(score30)));
+  score90 = Math.max(5, Math.min(95, Math.round(score90)));
+
+  const trustMap = { '높음': '예측 신뢰도 높음', '중간': '예측 신뢰도 중간', '낮음': '예측 신뢰도 낮음' };
+  const trustLabel = score30 >= 60 ? '중간' : '낮음';
+
+  // 유형명/설명 (재사용)
+  document.getElementById('paid-type-name').textContent = fr.typeName;
+  document.getElementById('paid-type-desc').textContent = fr.typeDesc;
+  document.getElementById('share-type-name').textContent = fr.typeName;
+
+  // 점수
+  document.getElementById('score-30').textContent = score30;
+  document.getElementById('score-90').textContent = score90;
+  document.getElementById('bar-30').style.width = score30 + '%';
+  document.getElementById('bar-90').style.width = score90 + '%';
+  document.getElementById('trust-30').textContent = trustMap[trustLabel];
+  document.getElementById('trust-90').textContent = score90 < 45 ? '유지 전략 필요' : '유지 가능성 있음';
+
+  // 긍정 신호
+  const posSignals = [];
+  if (a.q5 !== '차단') posSignals.push({ icon:'✅', txt:'연락 채널이 완전히 차단되지 않은 상태 — 접근 가능성 유지' });
+  if (a.q7 === '후회미안') posSignals.push({ icon:'✅', txt:'상대방에게서 후회/미안함 표현이 나타남 — 감정 잔존 신호' });
+  if (a.q4 === '외부상황') posSignals.push({ icon:'✅', txt:'이별 원인이 외부 상황 중심 — 감정 소멸이 아닌 현실 문제' });
+  if (a.q3 === '흐지부지') posSignals.push({ icon:'✅', txt:'이별 경계가 모호 — 관계 재정의 여지 존재' });
+  if (a.q1 === '1~2년' || a.q1 === '2년 이상') posSignals.push({ icon:'✅', txt:'장기 교제 이력 — 정서적 유대가 깊게 형성되어 있음' });
+  if (a.q6 === '아닌것같음') posSignals.push({ icon:'✅', txt:'대안 파트너 없는 것으로 추정 — 대체재 부재' });
+  if (a.q7 === '혼재') posSignals.push({ icon:'✅', txt:'상대 감정이 완전히 식지 않은 혼재 상태 — 감정 가변성 높음' });
+  while (posSignals.length < 5) posSignals.push({ icon:'ℹ️', txt:'추가 데이터 입력 시 긍정 신호 분석 정확도가 상승합니다' });
+
+  const posEl = document.getElementById('positive-signals');
+  posEl.innerHTML = posSignals.slice(0,5).map(s => `<li><span class="si">${s.icon}</span><span>${s.txt}</span></li>`).join('');
+
+  // 부정 신호
+  const negSignals = [];
+  if (a.q5 === '차단') negSignals.push({ icon:'⚠️', txt:'완전 차단 상태 — 직접 접근이 불가능한 상황' });
+  if (a.q4 === '신뢰붕괴') negSignals.push({ icon:'⚠️', txt:'신뢰 파괴가 이별 원인 — 재회 후 유지 가능성을 낮추는 강력 변수' });
+  if (a.q8 === '반복') negSignals.push({ icon:'⚠️', txt:'반복 온오프 패턴 — 재회는 가능하나 유지 안정성 낮음' });
+  if (a.q6 === '확실히') negSignals.push({ icon:'⚠️', txt:'대안 파트너 존재 가능성 높음 — 현재 비교 대상이 있음' });
+  if (a.q7 === '무관심') negSignals.push({ icon:'⚠️', txt:'상대가 현재 무관심/냉담한 태도 — 감정 소멸 우려' });
+  if (a.q2 === '6개월 이상') negSignals.push({ icon:'⚠️', txt:'이별 후 6개월 이상 경과 — 시간에 따른 관계 자연 소멸 가능성' });
+  if (a.q3 === '상대방') negSignals.push({ icon:'⚠️', txt:'상대방이 먼저 종료 — 재회 동기 불균형 상태' });
+  while (negSignals.length < 5) negSignals.push({ icon:'ℹ️', txt:'상대의 명확한 종료 의사 / 대안 연애 여부 확인 시 정확도 상승' });
+
+  const negEl = document.getElementById('negative-signals');
+  negEl.innerHTML = negSignals.slice(0,5).map(s => `<li><span class="si">${s.icon}</span><span>${s.txt}</span></li>`).join('');
+
+  // 핵심 변수
+  const keyVars = [];
+  if (a.q5 === '차단') keyVars.push('연락 차단 여부: 가장 강력한 부정 변수로 작용');
+  else if (a.q5 === '자주' || a.q5 === '거의정상') keyVars.push('연락 빈도: 접점 유지가 재회 발생 가능성을 높이는 핵심 요소');
+  else keyVars.push('현재 연락 상태: 접점 회복 가능성의 핵심 지표');
+
+  if (a.q4 === '신뢰붕괴') keyVars.push('이별 원인(신뢰 붕괴): 장기 유지 가능성을 결정하는 가장 중요한 변수');
+  else if (a.q4 === '외부상황') keyVars.push('이별 원인(외부 상황): 해결 가능성이 높아 재회 후 안정성에 유리');
+  else keyVars.push('이별 원인 유형: 해결 가능성과 재발 위험을 좌우하는 핵심 변수');
+
+  if (a.q7 === '후회미안') keyVars.push('상대의 태도(후회/미안함): 감정 잔존의 강력한 긍정 신호');
+  else if (a.q7 === '무관심') keyVars.push('상대의 태도(무관심): 접근 시기와 방법을 신중히 결정해야 하는 경고 신호');
+  else keyVars.push('상대의 현재 태도: 감정 잔존 여부를 판단하는 직접적 지표');
+
+  const varEl = document.getElementById('key-variables');
+  varEl.innerHTML = keyVars.map((v,i) => `<div class="variable-item"><strong>${i+1}위.</strong> ${v}</div>`).join('');
+
+  // 하면 안되는 행동 5가지
+  const badActions = [
+    fr.dangerAction.replace('🚫 ',''),
+    '매일 안부 연락하며 존재감 강조 — 부담감을 줘서 더 멀어지는 역효과',
+    '공통 지인을 통해 상태 파악하려는 행동 — 상대방에게 빠르게 전달되어 신뢰를 낮춤',
+    '자책이나 자기비하 메시지 전송 — 상대방에게 감정적 부담을 주고 관계를 불편하게 만듦',
+    a.q8 === '반복' ? '원인 해결 없이 "다시 만나자"만 반복 — 이미 학습된 패턴으로 효과 없음' : '만남을 요구하는 직접적 압박 — 시기 전 압박은 거부 패턴을 강화함'
+  ];
+
+  const badEl = document.getElementById('bad-actions');
+  badEl.innerHTML = badActions.map((a,i) => `
+    <div class="action-item">
+      <div class="action-num red">${i+1}</div>
+      <div>${a}</div>
+    </div>`).join('');
+
+  // 7일 가이드
+  const timeline = [
+    { day:'1~2일', content:'<strong>관찰 모드</strong>: 연락 자제. 감정 안정화에 집중. SNS 스토킹 중단.', },
+    { day:'3~4일', content:'<strong>자기 점검</strong>: 이별 원인 중 내가 바꿀 수 있는 것 1개 파악하기.', },
+    { day:'5일', content:'<strong>신호 체크</strong>: 상대방이 먼저 연락/반응했다면 짧고 가볍게 응대. 없다면 유지.', },
+    { day:'6~7일', content: a.q5 === '차단'
+        ? '<strong>간접 접점</strong>: 공통 지인을 통하지 말고, 차단 해제를 기다리는 편이 낫습니다.'
+        : '<strong>첫 신호</strong>: 일상적 내용으로 짧은 연락 1회 시도 가능. 기대감 배제, 회신 없어도 추가 연락 금지.', },
+  ];
+
+  const tlEl = document.getElementById('timeline-guide');
+  tlEl.innerHTML = timeline.map(t => `
+    <div class="timeline-day">
+      <div class="td-badge">${t.day}</div>
+      <div class="td-content">${t.content}</div>
+    </div>`).join('');
+
+  // 상대 반응 시뮬레이션
+  const sims = [
+    {
+      trigger: '🗨️ 시나리오 1: 내가 먼저 연락했을 때',
+      response: a.q5 === '차단'
+        ? '차단 상태에서 연락 시도 시 — 매우 높은 확률로 무응답 또는 차단 강화. 이 시기의 직접 접근은 권장하지 않습니다.'
+        : a.q7 === '후회미안'
+          ? '짧고 일상적인 연락에 50~60% 확률로 응답 가능. 단, 즉각적인 감정 표현은 기대하지 않는 것이 좋습니다.'
+          : '응답 가능성은 중간 수준. 내용에 따라 크게 달라질 수 있으며, 가벼운 화제가 효과적입니다.'
+    },
+    {
+      trigger: '🗨️ 시나리오 2: 상대가 먼저 연락해왔을 때',
+      response: '응대 핵심 원칙: 짧게, 따뜻하게, 여지 있게. 너무 빠른 재결합 요구는 금물. 상대가 말문을 열었을 때는 경청이 가장 강력한 무기입니다.'
+    },
+    {
+      trigger: '🗨️ 시나리오 3: SNS에서 반응이 왔을 때',
+      response: '좋아요/스토리 반응은 약한 긍정 신호입니다. 직접 DM으로 연결하려는 시도보다는 자연스러운 일상 콘텐츠로 존재감을 유지하는 것이 효과적입니다.'
+    }
+  ];
+
+  const simEl = document.getElementById('sim-scenarios');
+  simEl.innerHTML = sims.map(s => `
+    <div class="sim-item">
+      <div class="sim-trigger">${s.trigger}</div>
+      <div class="sim-response">${s.response}</div>
+    </div>`).join('');
+
+  // 재회 권장도
+  const recEl = document.getElementById('recommend-card');
+  const recIcon = document.getElementById('rec-icon');
+  const recLabel = document.getElementById('rec-label');
+  const recDesc = document.getElementById('rec-desc');
+
+  if (a.q9 !== '없음') {
+    recEl.className = 'recommend-card rec-no';
+    recIcon.textContent = '🚨';
+    recLabel.textContent = '비권장 — 안전 우선';
+    recDesc.textContent = '입력 데이터에 위험 신호가 포함되어 있습니다. 재회 여부보다 본인의 안전과 심리적 안정을 먼저 확인하세요.';
+  } else if (score30 >= 65 && score90 >= 50) {
+    recEl.className = 'recommend-card rec-yes';
+    recIcon.textContent = '✅';
+    recLabel.textContent = '재회 시도 권장';
+    recDesc.textContent = '현재 데이터 기준 재회 가능성과 유지 가능성 모두 긍정적입니다. 단, 이별 원인에 대한 실질적 변화가 동반되어야 합니다.';
+  } else if (score30 >= 45) {
+    recEl.className = 'recommend-card rec-hold';
+    recIcon.textContent = '⏸️';
+    recLabel.textContent = '보류 — 조건부 시도';
+    recDesc.textContent = '재회 가능성은 있으나 이별 원인 해결이 선행되어야 합니다. 준비 없는 접근은 오히려 역효과를 낼 수 있습니다.';
+  } else {
+    recEl.className = 'recommend-card rec-no';
+    recIcon.textContent = '⛔';
+    recLabel.textContent = '비권장 — 전략 재검토';
+    recDesc.textContent = '현재 시점에서의 접근은 실패 확률이 높습니다. 충분한 냉각기와 자기 변화가 먼저입니다. 재회보다 자신의 회복에 집중하세요.';
+  }
+
+  // 한 줄 요약
+  const summaries = {
+    '반복 온오프형': '재회는 가능하지만, 같은 원인이 반복된다면 이번에도 달라질 가능성은 낮습니다.',
+    '일방 단절형': '상대가 문을 닫았습니다. 문을 두드리기 전에 왜 닫았는지를 먼저 이해해야 합니다.',
+    '신뢰 붕괴형': '신뢰는 재회보다 훨씬 느리게 회복됩니다. 서두르는 것이 오히려 가장 큰 실수입니다.',
+    '상황 장벽형': '감정이 아닌 상황이 문제라면, 상황이 바뀔 때까지의 전략이 필요합니다.',
+    '감정 잔존형': '감정이 남아 있다는 건 기회이지만, 잘못된 접근은 그 감정마저 소진시킵니다.',
+    '재접점 가능형': '연락이 닿는다는 건 최소한의 문은 열려 있다는 뜻입니다. 그 문을 어떻게 열지가 핵심입니다.'
+  };
+  document.getElementById('one-line-summary').textContent = summaries[fr.typeName] || '현재 데이터 기준 잠정 추정입니다. 상황 변화에 따라 재진단을 권장합니다.';
+
+  // 공유용 인사이트
+  const insights = {
+    '반복 온오프형': '"왜 반복이별형인지 분석해줬는데 내 패턴이 딩 나왔어 😮"',
+    '일방 단절형': '"지금 연락하면 왜 역효과인지 이유까지 알려줌"',
+    '신뢰 붕괴형': '"재회 확률보다 유지 가능성이 더 낮다고 나왔어... 솔직하더라"',
+    '상황 장벽형': '"상황 장벽형이래, 감정 문제가 아니라서 희망이 있다고 함"',
+    '감정 잔존형': '"지금 내가 하면 망하는 행동을 정확히 짚아줌 소름"',
+    '재접점 가능형': '"연락 타이밍까지 알려줘서 의외로 실용적이었음"'
+  };
+  document.getElementById('share-insight').textContent = insights[fr.typeName] || '"데이터 기반 분석이라 운세랑 달랐음"';
+}
+
+// ══════════════════════════════════════
+// 결제 모달
+// ══════════════════════════════════════
+function openPayModal() {
+  // 모달 열 때 항상 STEP1로 초기화
+  resetPaySteps();
+  document.getElementById('pay-modal').classList.add('open');
+}
+function closePayModal() {
+  document.getElementById('pay-modal').classList.remove('open');
+}
+// ── 페이앱 결제 처리 ──
+const PAYAPP_URL = 'https://www.payapp.kr/L/z4aquB';
+
+function goPayApp() {
+  // 답변 저장
+  try { sessionStorage.setItem('reAnswer', JSON.stringify(answers)); } catch(e){}
+  // STEP2(완료 확인 버튼)로 전환
+  document.getElementById('pay-step1').style.display = 'none';
+  document.getElementById('pay-step2').style.display = 'block';
+  // 페이앱 결제 페이지를 새 탭으로 열기
+  window.open(PAYAPP_URL, '_blank');
+}
+
+function resetPaySteps() {
+  document.getElementById('pay-step1').style.display = 'block';
+  document.getElementById('pay-step2').style.display = 'none';
+}
+
+function confirmPaid() {
+  closePayModal();
+  goScreen('screen-loading2');
+  computeFreeResult();
+  setTimeout(() => {
+    computePaidResult();
+    goScreen('screen-paid-result');
+  }, 3500);
+}
+
+// ══════════════════════════════════════
+// 공유 기능
+// ══════════════════════════════════════
+function shareResult() {
+  const typeName = window._freeResult ? window._freeResult.typeName : '재접점 가능형';
+  const text = `[재회분석] 내 연애회복 케이스: ${typeName}\n\n"지금 내가 하면 망하는 행동과 상대 반응 타이밍까지 알려줌"\n\n👉 나도 해보기:`;
+  const url = window.location.href;
+
+  if (navigator.share) {
+    navigator.share({ title: '재회 가능성 분석', text: text, url: url })
+      .catch(() => fallbackShare(text, url));
+  } else {
+    fallbackShare(text, url);
+  }
+}
+
+function fallbackShare(text, url) {
+  const kakaoText = encodeURIComponent(text + ' ' + url);
+  const kakaoUrl = `https://story.kakao.com/s/share?url=${encodeURIComponent(url)}&text=${kakaoText}`;
+  // 카카오톡 공유 시뮬레이션
+  if (confirm('카카오톡 공유를 위해 링크를 복사합니다.\n\n복사 후 카카오톡에 붙여넣기 하세요!')) {
+    copyToClipboard(text + '\n' + url);
+    alert('✅ 클립보드에 복사되었습니다! 카카오톡에 붙여넣기 해주세요.');
+  }
+}
+
+function copyLink() {
+  const url = window.location.href;
+  copyToClipboard(url);
+  alert('✅ 링크가 복사되었습니다! (결과는 7일간 보관됩니다)');
+}
+
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).catch(() => legacyCopy(text));
+  } else {
+    legacyCopy(text);
+  }
+}
+
+function legacyCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+// ══════════════════════════════════════
+// 리셋
+// ══════════════════════════════════════
+function resetAll() {
+  Object.keys(answers).forEach(k => delete answers[k]);
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  window._freeResult = null;
+}
+
+// 모달 외부 클릭 닫기
+document.getElementById('pay-modal').addEventListener('click', function(e) {
+  if (e.target === this) closePayModal();
+});
+</script>
+</body>
+</html>
