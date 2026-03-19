@@ -367,13 +367,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
 .followup strong{color:#C4B5FD;}
 .disc{font-size:11px;color:rgba(255,255,255,.25);line-height:1.7;text-align:center;padding:16px;background:rgba(255,255,255,.02);border-radius:12px;margin-bottom:14px;}
 
-/* ── SAFETY ── */
-.safety-pg{background:linear-gradient(160deg,#0D0820,#1A0A3C);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;}
-.safety-box{max-width:420px;text-align:center;}
-.safety-ico{font-size:64px;margin-bottom:18px;animation:pulse 2s infinite;}
-.safety-ttl{font-size:24px;font-weight:900;color:#F87171;margin-bottom:14px;}
-.safety-body{font-size:14px;color:rgba(255,255,255,.7);line-height:1.75;margin-bottom:28px;}
-.safety-btn{width:100%;padding:14px;font-size:14px;font-weight:700;background:var(--danger);color:#fff;border:none;border-radius:14px;cursor:pointer;margin-bottom:10px;font-family:'Noto Sans KR',sans-serif;}
 
 /* ── MODAL ── */
 .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:999;align-items:flex-end;justify-content:center;}
@@ -429,7 +422,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
     <ul class="feature-glass">
       <li><span class="fi">🆓</span> 내 케이스 유형 즉시 확인 (무료)</li>
       <li><span class="fi">⚠️</span> 지금 절대 하면 안 되는 행동 1개 (무료)</li>
-      <li><span class="fi">📊</span> 재회 가능성 구간: 높음/보통/낮음 (무료)</li>
+      <li><span class="fi">📊</span> 재회 가능성 구점: 높음/보통/낙음 (무료)</li>
       <li><span class="fi">🔑</span> 30일/90일 정밀 점수 + 행동 가이드 (1,000원)</li>
     </ul>
     <button class="btn-cta" onclick="goScreen('screen-q1')">무료 진단 시작하기 →</button>
@@ -506,7 +499,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
       <div class="q-block">
         <div class="q-lbl"><span class="qn">4</span>이별의 가장 큰 이유는?</div>
         <div class="opts" id="q4">
-          <button class="opt" onclick="selectOpt('q4',this,'감정식음')">감정이 식었다 / 더 이상 좋아하지 않는다</button>
+          <button class="opt" onclick="selectOpt('q4',this,'감정시음')">감정이 식었다 / 더 이상 좋아하지 않는다</button>
           <button class="opt" onclick="selectOpt('q4',this,'반복갈등')">반복되는 싸움 / 성격 차이</button>
           <button class="opt" onclick="selectOpt('q4',this,'외부상황')">거리·바쁨·취업·군대 등 현실 문제</button>
           <button class="opt" onclick="selectOpt('q4',this,'신뢰붕괴')">바람·거짓말·신뢰 파괴</button>
@@ -568,12 +561,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
         </div>
       </div>
       <div class="q-block">
-        <div class="q-lbl"><span class="qn">9</span>⚠️ 안전 확인 (꼭 답해주세요)</div>
+        <div class="q-lbl"><span class="qn">9</span>이별 후 상대의 SNS 활동은?</div>
         <div class="opts" id="q9">
-          <button class="opt" onclick="selectOpt('q9',this,'없음')">없다 — 일반적인 이별</button>
-          <button class="opt danger-opt" onclick="selectOpt('q9',this,'신체폭력')">신체적 폭력이 있었다</button>
-          <button class="opt danger-opt" onclick="selectOpt('q9',this,'협박')">협박·통제·스토킹 행동이 있었다</button>
-          <button class="opt danger-opt" onclick="selectOpt('q9',this,'경제착취')">경제적 착취나 지속적 정서 학대가 있었다</button>
+          <button class="opt" onclick="selectOpt('q9',this,'활발')">이별 후 오히려 활발하게 올리고 있다</button>
+          <button class="opt" onclick="selectOpt('q9',this,'줄었음')">이별 후 게시물이 확연히 줄었다</button>
+          <button class="opt" onclick="selectOpt('q9',this,'비공개')">계정을 비공개로 전환했다</button>
+          <button class="opt" onclick="selectOpt('q9',this,'모름')">확인하지 않았거나 모르다</button>
         </div>
       </div>
     </div>
@@ -760,23 +753,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
     <div class="followup">
       <p>📲 상황이 바뀌면 점수도 바뀝니다<br><strong>7일 후 재진단을 받으면 변화된 가능성을 확인할 수 있습니다.</strong></p>
     </div>
-    <div class="disc">본 분석은 입력된 데이터 기반의 통계적 추정이며, 확정적 예언이 아닙니다. 재회와 관계 결정은 본인의 판단에 따르세요. 위험 관계(폭력·스토킹·강압)가 있는 경우 재회 여부보다 안전을 우선하시기 바랍니다.</div>
+    <div class="disc">본 분석은 입력된 데이터 기반의 통계적 추정이며, 확정적 예언이 아닙니다. 재회와 관계 결정은 본인의 판단에 따르세요.</div>
   </div>
 </div>
 
-<!-- SAFETY -->
-<div id="screen-safety" class="screen">
-  <div class="safety-pg">
-    <div class="safety-box">
-      <div class="safety-ico">🚨</div>
-      <div class="safety-ttl">먼저 안전을 확인해 주세요</div>
-      <div class="safety-body">입력하신 내용에서 <strong>위험 신호</strong>가 감지되었습니다.<br><br>폭력·협박·통제·스토킹이 있는 관계에서는 재회 가능성보다 <strong>본인의 안전</strong>이 훨씬 더 중요합니다.<br><br>혼자 결정하기 어려우시다면 아래 기관에 도움을 요청하세요.</div>
-      <button class="safety-btn" onclick="window.open('tel:1366')">📞 여성긴급전화 1366 (24시간)</button>
-      <button class="safety-btn" onclick="window.open('tel:112')">🚔 경찰 112</button>
-      <button class="btn-ghost" style="margin-top:10px;" onclick="goScreen('screen-landing')">← 홈으로 돌아가기</button>
-    </div>
-  </div>
-</div>
 
 <!-- MODAL -->
 <div class="modal-bg" id="pay-modal">
@@ -790,7 +770,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
     </div>
     <div id="pay-step1">
       <button class="btn-pay" onclick="goPayApp()" style="margin-bottom:0;">🔐 1,000원 결제하러 가기 →</button>
-      <div class="modal-disc">결제 금액: 1,000원 (부가세 포함)<br>결과 만족도가 낮으면 1회 무료 재분석 보장<br>입력 데이터는 7일 후 자동 삭제됩니다</div>
+      <div class="modal-disc">결제 금액: 1,000원 (부가세 포함)<br>결과 만족도가 낙으면 1회 무료 재분석 보장<br>입력 데이터는 7일 후 자동 삭제됩니다</div>
     </div>
     <div id="pay-step2" style="display:none;">
       <div class="pay-step2-box">
@@ -865,7 +845,6 @@ function goQ3(){
 }
 function goAnalyze(){
   if(!answers.q7||!answers.q8||!answers.q9){alert('모든 항목을 선택해 주세요!');return;}
-  if(['신체폭력','협박','경제착취'].includes(answers.q9)){goScreen('screen-safety');return;}
   try{sessionStorage.setItem('reAnswer',JSON.stringify(answers));}catch(e){}
   goScreen('screen-loading');
   setTimeout(()=>{computeFreeResult();goScreen('screen-free-result');},3200);
@@ -877,7 +856,7 @@ function computeFreeResult(){
   let typeName,typeBadge,typeDesc;
   if(a.q8==='반복'){typeName='반복 온오프형';typeBadge='🔁 케이스 유형';typeDesc='재회는 반복되지만 같은 원인이 반복 재발하는 패턴입니다. 재회 발생 가능성은 있으나 관계 안정성에 주의가 필요합니다.';}
   else if(a.q3==='상대방'&&a.q7==='무관심'){typeName='일방 단절형';typeBadge='❌ 케이스 유형';typeDesc='상대방이 먼저 종료했고 현재 감정 표현이 없는 상태입니다. 접점 회복이 선행되어야 합니다.';}
-  else if(a.q4==='신뢰붕괴'){typeName='신뢰 붕괴형';typeBadge='💔 케이스 유형';typeDesc='신뢰 훼손이 핵심 원인인 케이스입니다. 재회보다 신뢰 회복이 우선이며, 재발 방지 구조 없이는 유지 가능성이 낮습니다.';}
+  else if(a.q4==='신뢰붕괴'){typeName='신뢰 붕괴형';typeBadge='💔 케이스 유형';typeDesc='신뢰 훼손이 핵심 원인인 케이스입니다. 재회보다 신뢰 회복이 우선이며, 재발 방지 구조 없이는 유지 가능성이 낙습니다.';}
   else if(a.q4==='외부상황'){typeName='상황 장벽형';typeBadge='🌐 케이스 유형';typeDesc='감정보다 현실 상황이 이별 원인입니다. 장벽 해소 시 재회 가능성이 상대적으로 높은 유형입니다.';}
   else if(a.q7==='혼재'){typeName='감정 잔존형';typeBadge='💜 케이스 유형';typeDesc='상대방에게 감정이 완전히 소멸되지 않은 신호가 있습니다. 접근 방식과 타이밍이 핵심 변수입니다.';}
   else if(a.q5==='거의정상'||a.q5==='자주'){typeName='재접점 가능형';typeBadge='📡 케이스 유형';typeDesc='연락 채널이 유지되고 있습니다. 관계 정의를 어떻게 재설정하느냐가 핵심입니다.';}
@@ -899,16 +878,19 @@ function computeFreeResult(){
   if(a.q2==='6개월 이상')levelScore-=10;
   if(a.q3==='나')levelScore+=5;
   if(a.q3==='상대방')levelScore-=5;
+  if(a.q9==='줄었음')levelScore+=8;
+  if(a.q9==='비공개')levelScore+=5;
+  if(a.q9==='활발')levelScore-=8;
   levelScore=Math.max(10,Math.min(90,levelScore));
 
   let levelTxt,levelClass,levelDesc;
   if(levelScore>=65){levelTxt='높음';levelClass='high';levelDesc='긍정 신호 복수 감지';}
   else if(levelScore>=40){levelTxt='보통';levelClass='mid';levelDesc='추가 분석 권장';}
-  else{levelTxt='낮음';levelClass='low';levelDesc='접근 전 전략 재검토 필요';}
+  else{levelTxt='낙음';levelClass='low';levelDesc='접근 전 전략 재검토 필요';}
 
   let trustTxt,trustDesc;
   if(Object.keys(answers).length>=9){trustTxt='중간';trustDesc='정밀분석 시 높음으로 상승';}
-  else{trustTxt='낮음';trustDesc='추가 데이터 필요';}
+  else{trustTxt='낙음';trustDesc='추가 데이터 필요';}
 
   let dangerAction='';
   if(a.q5==='차단')dangerAction='🚫 차단 해제를 요구하거나 다른 연락처로 연락 시도 — 상대방의 차단은 명확한 경계 표시입니다. 이를 우회하면 역효과가 큽니다.';
@@ -945,8 +927,8 @@ function computePaidResult(){
   if(a.q3==='흐지부지'){score30+=8;}
   score30=Math.max(5,Math.min(95,Math.round(score30)));
   score90=Math.max(5,Math.min(95,Math.round(score90)));
-  const trustLabel=score30>=60?'중간':'낮음';
-  const trustMap={'높음':'예측 신뢰도 높음','중간':'예측 신뢰도 중간','낮음':'예측 신뢰도 낮음'};
+  const trustLabel=score30>=60?'중간':'낙음';
+  const trustMap={'높음':'예측 신뢰도 높음','중간':'예측 신뢰도 중간','낙음':'예측 신뢰도 낙음'};
 
   document.getElementById('paid-type-name').textContent=fr.typeName;
   document.getElementById('paid-type-desc').textContent=fr.typeDesc;
@@ -971,7 +953,7 @@ function computePaidResult(){
 
   const negSignals=[];
   if(a.q5==='차단')negSignals.push({icon:'⚠️',txt:'완전 차단 상태 — 직접 접근이 불가능한 상황'});
-  if(a.q4==='신뢰붕괴')negSignals.push({icon:'⚠️',txt:'신뢰 파괴가 이별 원인 — 재회 후 유지 가능성을 낮추는 강력 변수'});
+  if(a.q4==='신뢰붕괴')negSignals.push({icon:'⚠️',txt:'신뢰 파괴가 이별 원인 — 재회 후 유지 가능성을 낙추는 강력 변수'});
   if(a.q8==='반복')negSignals.push({icon:'⚠️',txt:'반복 온오프 패턴 — 재회는 가능하나 유지 안정성 낙음'});
   if(a.q6==='확실히')negSignals.push({icon:'⚠️',txt:'대안 파트너 존재 가능성 높음 — 현재 비교 대상이 있음'});
   if(a.q7==='무관심')negSignals.push({icon:'⚠️',txt:'상대가 현재 무관심/냉담한 태도 — 감정 소멸 우려'});
@@ -995,7 +977,7 @@ function computePaidResult(){
   const badActions=[
     fr.dangerAction.replace('🚫 ',''),
     '매일 안부 연락하며 존재감 강조 — 부담감을 줘서 더 멀어지는 역효과',
-    '공통 지인을 통해 상태 파악하려는 행동 — 상대방에게 빠르게 전달되어 신뢰를 낮춤',
+    '공통 지인을 통해 상태 파악하려는 행동 — 상대방에게 빠르게 전달되어 신뢰를 낙춤',
     '자책이나 자기비하 메시지 전송 — 상대방에게 감정적 부담을 주고 관계를 불편하게 만듦',
     a.q8==='반복'?'원인 해결 없이 "다시 만나자"만 반복 — 이미 학습된 패턴으로 효과 없음':'만남을 요구하는 직접적 압박 — 시기 전 압박은 거부 패턴을 강화함'
   ];
@@ -1004,7 +986,7 @@ function computePaidResult(){
   const timeline=[
     {day:'1~2일',content:'<strong>관찰 모드</strong>: 연락 자제. 감정 안정화에 집중. SNS 스토킹 중단.'},
     {day:'3~4일',content:'<strong>자기 점검</strong>: 이별 원인 중 내가 바꿀 수 있는 것 1개 파악하기.'},
-    {day:'5일',content:'<strong>신호 체크</strong>: 상대방이 먼저 연락/반응했다면 짧고 가벼게 응대. 없다면 유지.'},
+    {day:'5일',content:'<strong>신호 체크</strong>: 상대방이 먼저 연락/반응했다면 짧고 가볍게 응대. 없다면 유지.'},
     {day:'6~7일',content:a.q5==='차단'?'<strong>간접 접점</strong>: 공통 지인을 통하지 말고, 차단 해제를 기다리는 편이 낫습니다.':'<strong>첫 신호</strong>: 일상적 내용으로 짧은 연락 1회 시도 가능. 기대감 배제, 회신 없어도 추가 연락 금지.'},
   ];
   document.getElementById('timeline-guide').innerHTML=timeline.map(t=>`<div class="tl-day"><div class="tl-badge">${t.day}</div><div class="tl-txt">${t.content}</div></div>`).join('');
@@ -1020,15 +1002,14 @@ function computePaidResult(){
   const recIcon=document.getElementById('rec-icon');
   const recLabel=document.getElementById('rec-label');
   const recDesc=document.getElementById('rec-desc');
-  if(a.q9!=='없음'){recEl.className='rec-card rec-no';recIcon.textContent='🚨';recLabel.textContent='비권장 — 안전 우선';recDesc.textContent='입력 데이터에 위험 신호가 포함되어 있습니다. 재회 여부보다 본인의 안전과 심리적 안정을 먼저 확인하세요.';}
-  else if(score30>=65&&score90>=50){recEl.className='rec-card rec-yes';recIcon.textContent='✅';recLabel.textContent='재회 시도 권장';recDesc.textContent='현재 데이터 기준 재회 가능성과 유지 가능성 모두 긍정적입니다. 단, 이별 원인에 대한 실질적 변화가 동반되어야 합니다.';}
-  else if(score30>=45){recEl.className='rec-card rec-hold';recIcon.textContent='⏸️';recLabel.textContent='보류 — 조건부 시도';recDesc.textContent='재회 가능성은 있으나 이별 원인 해결이 선행되어야 합니다. 준비 없는 접근은 오히려 역효과를 낼 수 있습니다.';}
+  if(score30>=65&&score90>=50){recEl.className='rec-card rec-yes';recIcon.textContent='✅';recLabel.textContent='재회 시도 권장';recDesc.textContent='현재 데이터 기준 재회 가능성과 유지 가능성 모두 긍정적입니다. 단, 이별 원인에 대한 실질적 변화가 동반되어야 합니다.';}
+  else if(score30>=45){recEl.className='rec-card rec-hold';recIcon.textContent='⏸️';recLabel.textContent='보류 — 조건부 시도';recDesc.textContent='재회 가능성은 있으나 이별 원인 해결이 선행되어야 합니다. 준비 없는 접근은 오히려 역효과를 낙 수 있습니다.';}
   else{recEl.className='rec-card rec-no';recIcon.textContent='⛔';recLabel.textContent='비권장 — 전략 재검토';recDesc.textContent='현재 시점에서의 접근은 실패 확률이 높습니다. 충분한 냉각기와 자기 변화가 먼저입니다.';}
 
-  const summaries={'반복 온오프형':'재회는 가능하지만, 같은 원인이 반복된다면 이번에도 달라질 가능성은 낙습니다.','일방 단절형':'상대가 문을 닫았습니다. 문을 두드리기 전에 왜 닫았는지를 먼저 이해해야 합니다.','신뢰 붕괴형':'신뢰는 재회보다 훨씬 느리게 회복됩니다. 서두르는 것이 오히려 가장 큰 실수입니다.','상황 장벽형':'감정이 아닌 상황이 문제라면, 상황이 바뀔 때까지의 전략이 필요합니다.','감정 잔존형':'감정이 남아 있다는 건 기회이지만, 잘못된 접근은 그 감정마저 소진시킵니다.','재접점 가능형':'연락이 닿f는다는 건 최소한의 문은 열려 있다는 뜻입니다. 그 문을 어떻게 열지가 핵심입니다.'};
+  const summaries={'반복 온오프형':'재회는 가능하지만, 같은 원인이 반복된다면 이번에도 달라질 가능성은 낙습니다.','일방 단절형':'상대가 문을 닫았습니다. 문을 두드리기 전에 왜 닫있는지를 먼저 이해해야 합니다.','신뢰 붕괴형':'신뢰는 재회보다 훨씬 느리게 회복됩니다. 서두르는 것이 오히려 가장 큰 실수입니다.','상황 장벽형':'감정이 아닌 상황이 문제라면, 상황이 바뀔 때까지의 전략이 필요합니다.','감정 잔존형':'감정이 남아 있다는 건 기회이지만, 잘못된 접근은 그 감정마저 소진시킵니다.','재접점 가능형':'연락이 닿는다는 건 최소한의 문은 열려 있다는 뜻입니다. 그 문을 어떻게 열지가 핵심입니다.'};
   document.getElementById('one-line-summary').textContent=summaries[fr.typeName]||'현재 데이터 기준 잠정 추정입니다. 상황 변화에 따라 재진단을 권장합니다.';
 
-  const insights={'반복 온오프형':'"왜 반복이별형인지 분석해줬는데 내 패턴이 딱 나왔어 😮"','일방 단절형':'"지금 연락하면 왜 역효과인지 이유까지 알려줌"','신뢰 붕괴형':'"재회 확률보다 유지 가능성이 더 낙다고 나왔어... 솔직하더라"','상황 장벽형':'"상황 장벽형이래, 감정 문제가 아니라서 희망이 있다고 함"','감정 잔존형':'"지금 내가 하면 망하는 행동을 정확히 짚아줌 소름"','재접점 가능형':'"연락 타이밍까지 알려줘서 의외로 실용적이었음"'};
+  const insights={'반복 온오프형':'"왜 반복이별형인지 분석해줬는데 내 패턴이 딡 나왔어 😮"','일방 단절형':'"지금 연락하면 왜 역효과인지 이유까지 알려줌"','신뢰 붕괴형':'"재회 확률보다 유지 가능성이 더 낙다고 나왔어... 솔직하더라"','상황 장벽형':'"상황 장벽형이래, 감정 문제가 아니라서 희망이 있다고 함"','감정 잔존형':'"지금 내가 하면 망하는 행동을 정확히 즡아줌 소름"','재접점 가능형':'"연락 타이밍까지 알려줘서 의외로 실용적이었음"'};
   document.getElementById('share-insight').textContent=insights[fr.typeName]||'"데이터 기반 분석이라 운세랑 달랐음"';
 }
 
