@@ -246,7 +246,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
   <div class="landing-bg-orb orb3"></div>
   <div class="landing-inner">
     <div class="badge-pill">&#128300; 데이터 기반 분석 &middot; AI 알고리즘</div>
-    <h1 class="landing-h1">내 이별,<br>지금 어디컴<br><span class="hi">와 있을까?</span></h1>
+    <h1 class="landing-h1">내 이별,<br>지금 어디쯤<br><span class="hi">와 있을까?</span></h1>
     <p class="landing-sub">감정이 아닌 관계 데이터로.<br>18가지 변수를 정밀 분석해<br>지금 하면 망하는 행동부터 알려드립니다.</p>
     <div class="stats-row">
       <div class="stat-item"><div class="stat-num">38,400+</div><div class="stat-lbl">누적 진단</div></div>
@@ -256,7 +256,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
     <ul class="feature-glass">
       <li><span class="fi">&#127379;</span> 내 케이스 유형 즉시 확인 (무료)</li>
       <li><span class="fi">&#9888;&#65039;</span> 지금 절대 하면 안 되는 행동 1개 (무료)</li>
-      <li><span class="fi">&#128202;</span> 재회 가능성 구간: 높음/보통/낙음 (무료)</li>
+      <li><span class="fi">&#128202;</span> 재회 가능성 구간: 높음/보통/낮음 (무료)</li>
       <li><span class="fi">&#128273;</span> 30일/90일 정밀 점수 + 7일 행동 가이드 (1,000원)</li>
     </ul>
     <button class="btn-cta" onclick="goScreen('screen-q1')">무료 진단 시작하기 &#8594;</button>
@@ -287,7 +287,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
       <div class="q-block">
         <div class="q-lbl"><span class="qn">1</span>교제 기간은?</div>
         <div class="opts">
-          <button class="opt" onclick="selectOpt('q1',this,'3개월미만')"3개월 미만 (썸 ~ 초기)</button>
+          <button class="opt" onclick="selectOpt('q1',this,'3개월미만')">3개월 미만 (썸 ~ 초기)</button>
           <button class="opt" onclick="selectOpt('q1',this,'3~6개월')">3~6개월</button>
           <button class="opt" onclick="selectOpt('q1',this,'6개월~1년')">6개월~1년</button>
           <button class="opt" onclick="selectOpt('q1',this,'1~2년')">1~2년</button>
@@ -299,7 +299,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#0D0820;color:#fff;overflo
       <div class="q-block">
         <div class="q-lbl"><span class="qn">2</span>이별 후 경과 기간은?</div>
         <div class="opts">
-          <button class="opt" onclick="selectOpt('q2',this,'1주이내')"1주일 이내 (아직 따끌따끌)</button>
+          <button class="opt" onclick="selectOpt('q2',this,'1주이내')">1주일 이내 (아직 따끈따끈)</button>
           <button class="opt" onclick="selectOpt('q2',this,'2~4주')">2~4주</button>
           <button class="opt" onclick="selectOpt('q2',this,'1~3개월')">1~3개월</button>
           <button class="opt" onclick="selectOpt('q2',this,'3~6개월')">3~6개월</button>
@@ -953,7 +953,7 @@ function computeFreeResult(){
   document.getElementById('res-level-desc').textContent=levelDesc;
   document.getElementById('res-trust-txt').textContent=trustTxt;
   document.getElementById('res-trust-desc').textContent=trustDesc;
-  document.getElementById('res-danger-action').textContent=dangerAction.replace(/&#128683;/g,'🚫');
+  document.getElementById('res-danger-action').innerHTML=dangerAction;
   window._freeResult={typeName,typeBadge,typeDesc,levelScore,levelTxt,dangerAction};
 }
 
@@ -1011,7 +1011,16 @@ function computePaidResult(){
   if(a.q15==='대화해결')posSignals.push({icon:'&#10003;',txt:'갈등을 대화로 해결하던 관계 &#8212; 의사소통 패턴 양호'});
   if(a.q14==='1회긍정')posSignals.push({icon:'&#10003;',txt:'재회 시도 시 부정적 반응 없었음 &#8212; 완전한 거절이 아님'});
   if(a.q11==='줄었음')posSignals.push({icon:'&#10003;',txt:'SNS 게시물 감소 &#8212; 내면 정리 중일 가능성'});
-  while(posSignals.length<5)posSignals.push({icon:'&#8505;&#65039;',txt:'추가 데이터 입력 시 긍정 신호 분석 정확도가 상승합니다'});
+  // 긍정 신호 부족 시 중립 분석 메시지로 채움 (최소 3개)
+  if(posSignals.length<3){
+    if(a.q2==='1주이내'||a.q2==='2~4주')posSignals.push({icon:'&#10003;',txt:'이별 후 시간이 짧음 &#8212; 감정 냉각 초기 단계로 복원 가능성 존재'});
+    if(a.q18==='분명히원함'||a.q18==='조건부')posSignals.push({icon:'&#10003;',txt:'재회 의지가 명확함 &#8212; 주도적 전략 수립 가능'});
+    if(a.q13&&a.q13.includes('운동외모'))posSignals.push({icon:'&#10003;',txt:'외모·자기관리 변화 시작 &#8212; 상대에게 긍정적 인상 변화 가능'});
+    if(a.q13&&a.q13.includes('이별원인파악'))posSignals.push({icon:'&#10003;',txt:'이별 원인을 객관적으로 파악 중 &#8212; 재회 준비도 높음'});
+    if(a.q15==='냉전')posSignals.push({icon:'&#10003;',txt:'갈등 후 자연히 해소되는 패턴 &#8212; 시간이 지나면 접근 가능성 있음'});
+  }
+  // 그래도 부족하면 분석 제한 안내 (최대 1개)
+  if(posSignals.length===0)posSignals.push({icon:'&#8212;',txt:'현재 입력된 데이터로는 명확한 긍정 신호를 확인하기 어렵습니다. 냉각기 이후 재진단을 권장합니다.'});
   document.getElementById('positive-signals').innerHTML=posSignals.slice(0,6).map(s=>'<li><span class="si">'+s.icon+'</span><span>'+s.txt+'</span></li>').join('');
 
   // 부정 신호
@@ -1026,7 +1035,11 @@ function computePaidResult(){
   if(a.q17==='감정폭발')negSignals.push({icon:'&#9888;&#65039;',txt:'이별 당시 감정 폭발 &#8212; 감정적 앙금이 남아있을 가능성'});
   if(a.q15==='쌓임')negSignals.push({icon:'&#9888;&#65039;',txt:'갈등을 쌓아뒀던 패턴 &#8212; 근본 문제 해결 없이 재회 시 재발 위험'});
   if(a.q11==='차단')negSignals.push({icon:'&#9888;&#65039;',txt:'SNS 차단 &#8212; 강한 거리두기 의사 표현'});
-  while(negSignals.length<5)negSignals.push({icon:'&#8505;&#65039;',txt:'상대의 명확한 종료 의사 / 대안 연애 여부 확인 시 정확도 상승'});
+  if(a.q3==='상대방'&&a.q14==='없음')negSignals.push({icon:'&#9888;&#65039;',txt:'상대 주도 이별이며 아직 재접촉 시도 없음 &#8212; 상대 감정 파악 어려운 상태'});
+  if(a.q5==='감정식음')negSignals.push({icon:'&#9888;&#65039;',txt:'감정 소멸이 이별 원인 &#8212; 재점화 전략이 반드시 필요'});
+  if(a.q1==='3개월미만')negSignals.push({icon:'&#9888;&#65039;',txt:'교제 기간이 짧음 &#8212; 정서적 유대 형성이 미완성일 가능성'});
+  // 부정 신호 없을 경우에만 안내
+  if(negSignals.length===0)negSignals.push({icon:'&#8212;',txt:'현재 입력 데이터 기준 뚜렷한 부정 신호는 감지되지 않습니다. 상황 모니터링을 유지하세요.'});
   document.getElementById('negative-signals').innerHTML=negSignals.slice(0,6).map(s=>'<li><span class="si">'+s.icon+'</span><span>'+s.txt+'</span></li>').join('');
 
   // 핵심 변수
@@ -1075,14 +1088,14 @@ function computePaidResult(){
   const recLabel=document.getElementById('rec-label');
   const recDesc=document.getElementById('rec-desc');
   if(score30>=65&&score90>=50){
-    recEl.className='rec-card rec-yes';recIcon.textContent='&#10003;';recLabel.textContent='재회 시도 권장';
-    recDesc.textContent='현재 데이터 기준 재회 가능성과 유지 가능성 모두 긍정적입니다. 단, 이별 원인에 대한 실질적 변화가 동반되어야 합니다.';
+    recEl.className='rec-card rec-yes';recIcon.innerHTML='✅';recLabel.innerHTML='재회 시도 권장';
+    recDesc.innerHTML='현재 데이터 기준 재회 가능성과 유지 가능성 모두 긍정적입니다. 단, 이별 원인에 대한 실질적 변화가 동반되어야 합니다.';
   } else if(score30>=45){
-    recEl.className='rec-card rec-hold';recIcon.textContent='&#9208;&#65039;';recLabel.textContent='보류 &#8212; 조건부 시도';
-    recDesc.textContent='재회 가능성은 있으나 이별 원인 해결이 선행되어야 합니다. 준비 없는 접근은 오히려 역효과를 낼 수 있습니다.';
+    recEl.className='rec-card rec-hold';recIcon.innerHTML='⏸️';recLabel.innerHTML='보류 &mdash; 조건부 시도';
+    recDesc.innerHTML='재회 가능성은 있으나 이별 원인 해결이 선행되어야 합니다. 준비 없는 접근은 오히려 역효과를 낼 수 있습니다.';
   } else {
-    recEl.className='rec-card rec-no';recIcon.textContent='&#9940;';recLabel.textContent='비권장 &#8212; 전략 재검토';
-    recDesc.textContent='현재 시점에서의 접근은 실패 확률이 높습니다. 충분한 냉각기와 자기 변화가 먼저입니다.';
+    recEl.className='rec-card rec-no';recIcon.innerHTML='🚫';recLabel.innerHTML='비권장 &mdash; 전략 재검토';
+    recDesc.innerHTML='현재 시점에서의 접근은 실패 확률이 높습니다. 충분한 냉각기와 자기 변화가 먼저입니다.';
   }
 
   // 한 줄 요약
@@ -1134,10 +1147,10 @@ function shareResult(){
 }
 function fallbackShare(text,url){
   if(confirm('카카오톡 공유를 위해 링크를 복사합니다.\n\n복사 후 카카오톡에 붙여넣기 하세요!')){
-    copyToClipboard(text+'\n'+url);alert('&#10003; 클립보드에 복사되었습니다! 카카오톡에 붙여넣기 해주세요.');
+    copyToClipboard(text+'\n'+url);alert('✅ 클립보드에 복사되었습니다! 카카오톡에 붙여넣기 해주세요.');
   }
 }
-function copyLink(){copyToClipboard(window.location.href);alert('&#10003; 링크가 복사되었습니다! (결과는 7일간 보관됩니다)');}
+function copyLink(){copyToClipboard(window.location.href);alert('✅ 링크가 복사되었습니다! (결과는 7일간 보관됩니다)');}
 function copyToClipboard(text){
   if(navigator.clipboard){navigator.clipboard.writeText(text).catch(function(){legacyCopy(text)});}
   else{legacyCopy(text);}
